@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  zerix:
+    build: .
+    container_name: zerix-core
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./audit.jsonl:/app/audit.jsonl
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
