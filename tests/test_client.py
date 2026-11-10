@@ -49,5 +49,5 @@ def test_transfer_fails_closed_if_signer_throws():
     decision = client.transfer(to="0xabc", amount_usd=Decimal("5"))
     
     assert decision.outcome == Outcome.DENIED
-    assert "signer error (fail-closed)" in decision.reason
+    assert "signer/provider error (fail-closed)" in decision.reason
     assert "Network disconnected" in decision.reason
