@@ -86,6 +86,23 @@ python scripts/run_dashboard.py
 ~~~
 Open `http://localhost:8000` to view the UI.
 
+## 📦 TypeScript SDK
+
+If you are building AI agents in JavaScript or TypeScript (Node.js, Next.js), you can use our official SDK.
+
+```bash
+
+cd sdk/typescript
+
+npm install
+
+npm run build
+
+```
+
+
+
+
 ## 🛡️ Security Principles
 
 1. **Non-custodial forever:** Zerix never stores private keys in a centralized server (unless self-hosted via ENV).

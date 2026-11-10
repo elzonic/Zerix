@@ -18,7 +18,7 @@ from .automation.recurring import RecurringTransfer
 from .templates import load_template
 from .x402.handler import X402Handler
 
-__version__ = "0.2.0"
+__version__ = "0.3.0"
 
 __all__ = [
     "ZerixClient", "PolicyEngine", "SpendingCap", "Allowlist", "TimeWindow", "Decision", "Outcome", "PolicyDenied",
