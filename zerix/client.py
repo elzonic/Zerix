@@ -1,6 +1,7 @@
 """ZerixClient — the public entry point used by agents."""
 
 from decimal import Decimal
+from typing import Any
 
 from .policy.decision import Decision, Outcome
 from .policy.engine import PolicyEngine
@@ -33,3 +34,8 @@ class ZerixClient:
             return Decision(Outcome.ALLOWED, f"tx successful: {tx_hash}")
         except Exception as exc:
             return Decision(Outcome.DENIED, f"signer error (fail-closed): {exc}")
+
+    def as_langchain_tools(self) -> list[Any]:
+        """Returns a list of tools compatible with LangChain agents."""
+        from .integrations.tools import create_transfer_tool
+        return [create_transfer_tool(self)]
