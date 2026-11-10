@@ -4,7 +4,7 @@ from zerix.dashboard.web import generate_html
 def test_generate_html_empty(tmp_path):
     log_file = tmp_path / "audit.jsonl"
     html = generate_html(log_file)
-    assert "Zerix Audit Dashboard" in html
+    assert "Zerix Dashboard" in html
 
 def test_generate_html_with_data(tmp_path):
     log_file = tmp_path / "audit.jsonl"
