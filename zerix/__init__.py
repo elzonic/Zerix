@@ -11,6 +11,7 @@ from .audit.logger import AuditLogger
 from .providers.base import BaseProvider
 from .providers.mock import MockProvider
 from .automation.recurring import RecurringTransfer
+from .templates import load_template
 
 __version__ = "0.1.0"
 
@@ -30,4 +31,5 @@ __all__ = [
     "BaseProvider",
     "MockProvider",
     "RecurringTransfer",
+    "load_template",
 ]

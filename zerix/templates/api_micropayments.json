@@ -1,0 +1,11 @@
+{
+  "spending_cap": {
+    "per_tx_usd": "0.50",
+    "daily_usd": "10.00",
+    "require_human_above_usd": "1.00"
+  },
+  "time_window": {
+    "start_hour": 0,
+    "end_hour": 23
+  }
+}

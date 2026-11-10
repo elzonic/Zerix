@@ -1,0 +1,10 @@
+{
+  "spending_cap": {
+    "per_tx_usd": "50.00",
+    "daily_usd": "200.00",
+    "weekly_usd": "1000.00"
+  },
+  "allowlist": {
+    "contracts": ["0xUniswapV3Router", "0x1inchAggregator"]
+  }
+}
