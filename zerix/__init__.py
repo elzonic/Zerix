@@ -10,6 +10,7 @@ from .signers.mock import MockSigner
 from .audit.logger import AuditLogger
 from .providers.base import BaseProvider
 from .providers.mock import MockProvider
+from .automation.recurring import RecurringTransfer
 
 __version__ = "0.1.0"
 
@@ -28,4 +29,5 @@ __all__ = [
     "AuditLogger",
     "BaseProvider",
     "MockProvider",
+    "RecurringTransfer",
 ]
