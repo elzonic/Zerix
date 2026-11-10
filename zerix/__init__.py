@@ -8,6 +8,8 @@ from .policy.loader import load_policy_from_json
 from .signers.base import BaseSigner
 from .signers.mock import MockSigner
 from .signers.evm import EVMSigner
+from .signers.turnkey import TurnkeySigner
+from .signers.privy import PrivySigner
 from .audit.logger import AuditLogger
 from .providers.base import BaseProvider
 from .providers.mock import MockProvider
@@ -18,22 +20,7 @@ from .templates import load_template
 __version__ = "0.2.0"
 
 __all__ = [
-    "ZerixClient",
-    "PolicyEngine",
-    "SpendingCap",
-    "Allowlist",
-    "TimeWindow",
-    "Decision",
-    "Outcome",
-    "PolicyDenied",
-    "load_policy_from_json",
-    "BaseSigner",
-    "MockSigner",
-    "EVMSigner",
-    "AuditLogger",
-    "BaseProvider",
-    "MockProvider",
-    "JSONRPCProvider",
-    "RecurringTransfer",
-    "load_template",
+    "ZerixClient", "PolicyEngine", "SpendingCap", "Allowlist", "TimeWindow", "Decision", "Outcome", "PolicyDenied",
+    "load_policy_from_json", "BaseSigner", "MockSigner", "EVMSigner", "TurnkeySigner", "PrivySigner",
+    "AuditLogger", "BaseProvider", "MockProvider", "JSONRPCProvider", "RecurringTransfer", "load_template"
 ]
