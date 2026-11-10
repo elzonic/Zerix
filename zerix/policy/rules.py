@@ -1,4 +1,4 @@
-"""Policy rules: spending caps and recipient allowlists (Phase 0 v0)."""
+"""Policy rules: spending caps, allowlists, and time windows."""
 
 from dataclasses import dataclass, field
 from decimal import Decimal
@@ -25,3 +25,22 @@ class Allowlist:
         if not self.recipients:
             return True
         return address.lower() in {r.lower() for r in self.recipients}
+
+    def allows_contract(self, address: str) -> bool:
+        if not self.contracts:
+            return True
+        return address.lower() in {c.lower() for c in self.contracts}
+
+
+@dataclass(frozen=True)
+class TimeWindow:
+    """Restricts when transactions can occur (0-23 hours)."""
+
+    start_hour: int
+    end_hour: int
+
+    def is_allowed(self, current_hour: int) -> bool:
+        if self.start_hour <= self.end_hour:
+            return self.start_hour <= current_hour <= self.end_hour
+        # Handles overnight windows (e.g., 22:00 to 04:00)
+        return current_hour >= self.start_hour or current_hour <= self.end_hour
