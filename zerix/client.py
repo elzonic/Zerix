@@ -6,12 +6,20 @@ from typing import Any
 from .policy.decision import Decision, Outcome
 from .policy.engine import PolicyEngine
 from .signers.base import BaseSigner
+from .audit.logger import AuditLogger
 
 
 class ZerixClient:
-    def __init__(self, *, policy_engine: PolicyEngine, signer: BaseSigner | None = None):
+    def __init__(
+        self, 
+        *, 
+        policy_engine: PolicyEngine, 
+        signer: BaseSigner | None = None,
+        audit_logger: AuditLogger | None = None
+    ):
         self.policy = policy_engine
         self.signer = signer
+        self.audit = audit_logger or AuditLogger()
 
     def transfer(self, *, to: str, amount_usd: Decimal) -> Decision:
         # 1. Evaluate Policy
@@ -19,21 +27,47 @@ class ZerixClient:
         
         # 2. Fail-closed if denied
         if not decision.allowed:
+            self.audit.log({
+                "action": "transfer_denied",
+                "to": to,
+                "amount_usd": str(amount_usd),
+                "reason": decision.reason
+            })
             return decision
             
         # 3. Fail-closed if no signer
         if self.signer is None:
-            return Decision(
-                Outcome.DENIED,
-                "no signer configured; refusing to transfer (fail-closed)",
-            )
+            reason = "no signer configured; refusing to transfer (fail-closed)"
+            self.audit.log({
+                "action": "transfer_denied",
+                "to": to,
+                "amount_usd": str(amount_usd),
+                "reason": reason
+            })
+            return Decision(Outcome.DENIED, reason)
 
         # 4. Execute transaction (Fail-closed on error)
         try:
             tx_hash = self.signer.sign_and_send(to=to, amount_usd=amount_usd)
+            
+            # Log success
+            self.audit.log({
+                "action": "transfer_allowed",
+                "to": to,
+                "amount_usd": str(amount_usd),
+                "tx_hash": tx_hash
+            })
             return Decision(Outcome.ALLOWED, f"tx successful: {tx_hash}")
+            
         except Exception as exc:
-            return Decision(Outcome.DENIED, f"signer error (fail-closed): {exc}")
+            reason = f"signer error (fail-closed): {exc}"
+            self.audit.log({
+                "action": "transfer_denied",
+                "to": to,
+                "amount_usd": str(amount_usd),
+                "reason": reason
+            })
+            return Decision(Outcome.DENIED, reason)
 
     def as_langchain_tools(self) -> list[Any]:
         """Returns a list of tools compatible with LangChain agents."""
