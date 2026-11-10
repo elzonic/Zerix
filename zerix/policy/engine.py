@@ -1,4 +1,4 @@
-"""PolicyEngine — fail-closed evaluation. Phase 1.1 Full Policy Engine."""
+"""PolicyEngine — fail-closed evaluation. Phase 1.1 & 1.2."""
 
 from decimal import Decimal
 from datetime import datetime
@@ -8,7 +8,7 @@ from .rules import Allowlist, SpendingCap, TimeWindow
 
 class PolicyEngine:
     """
-    Evaluates transactions against spending caps, allowlists, and time windows.
+    Evaluates transactions against spending caps, allowlists, time windows, and HITL.
     Fail-closed: any internal error yields DENIED.
     """
 
@@ -32,7 +32,6 @@ class PolicyEngine:
         current_hour: int | None = None,
     ) -> Decision:
         try:
-            # Check time window first (fail-closed if outside window)
             if self.time_window:
                 hour = current_hour if current_hour is not None else datetime.now().hour
                 if not self.time_window.is_allowed(hour):
@@ -51,7 +50,6 @@ class PolicyEngine:
             return Decision(Outcome.DENIED, f"policy error (fail-closed): {exc}")
 
     def evaluate_contract_call(self, *, contract_address: str) -> Decision:
-        """Checks if the agent is allowed to interact with a smart contract."""
         try:
             if not self.allowlist.allows_contract(contract_address):
                 return Decision(Outcome.DENIED, f"contract {contract_address} not in allowlist")
@@ -85,5 +83,13 @@ class PolicyEngine:
 
         if not self.allowlist.allows_recipient(to):
             return Decision(Outcome.DENIED, f"recipient {to} not in allowlist")
+
+        # --- HITL Check (Phase 1.2) ---
+        if self.cap.require_human_above_usd is not None:
+            if amount_usd > self.cap.require_human_above_usd:
+                return Decision(
+                    Outcome.HELD, 
+                    f"amount exceeds HITL threshold (${self.cap.require_human_above_usd}); requires human approval"
+                )
 
         return Decision(Outcome.ALLOWED, "all checks passed")

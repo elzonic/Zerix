@@ -22,13 +22,22 @@ class ZerixClient:
         self.audit = audit_logger or AuditLogger()
 
     def transfer(self, *, to: str, amount_usd: Decimal) -> Decision:
-        # 1. Evaluate Policy
         decision = self.policy.evaluate_transfer(to=to, amount_usd=amount_usd)
         
-        # 2. Fail-closed if denied
-        if not decision.allowed:
+        # 1. Fail-closed if DENIED
+        if decision.outcome == Outcome.DENIED:
             self.audit.log({
                 "action": "transfer_denied",
+                "to": to,
+                "amount_usd": str(amount_usd),
+                "reason": decision.reason
+            })
+            return decision
+
+        # 2. Handle HITL (HELD) - Phase 1.2
+        if decision.outcome == Outcome.HELD:
+            self.audit.log({
+                "action": "transfer_held",
                 "to": to,
                 "amount_usd": str(amount_usd),
                 "reason": decision.reason
@@ -46,11 +55,9 @@ class ZerixClient:
             })
             return Decision(Outcome.DENIED, reason)
 
-        # 4. Execute transaction (Fail-closed on error)
+        # 4. Execute transaction
         try:
             tx_hash = self.signer.sign_and_send(to=to, amount_usd=amount_usd)
-            
-            # Log success
             self.audit.log({
                 "action": "transfer_allowed",
                 "to": to,
@@ -70,6 +77,5 @@ class ZerixClient:
             return Decision(Outcome.DENIED, reason)
 
     def as_langchain_tools(self) -> list[Any]:
-        """Returns a list of tools compatible with LangChain agents."""
         from .integrations.tools import create_transfer_tool
         return [create_transfer_tool(self)]
