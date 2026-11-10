@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.5.0] - 2023-11-01
+### Added
+- Full SaaS Dashboard UI with modern dark mode (Vercel/Apple style).
+- Interactive HITL (Approve/Reject) directly from the dashboard.
+- SQLite Database integration for user management.
+- API Key Authentication (`POST /api/register` and protected `/api/audit`).
+- Registration/Login UI for seamless onboarding.
+- Real-time full-stack integration (Python Backend -> API -> Frontend JS).
+
+## [0.4.0] - 2023-10-27
+### Added
+- Published to PyPI (pip install zerix).
+- Modern zero-dependency web dashboard.
+
 ## [0.3.0] - 2023-10-27
 ### Added
 - x402 Micropayments handler (HTTP 402 auto-payments).
@@ -12,7 +26,6 @@ All notable changes to this project will be documented in this file.
 ## [0.2.0] - 2023-10-26
 ### Added
 - Real Web3 Integration: `EVMSigner` (EIP-1559) and `JSONRPCProvider`.
-- Modern Dashboard UI (Dark mode, zero-dependency).
 - Policy Templates (`trading_bot_safe`, `api_micropayments`).
 - Webhooks and Recurring Transfer engine.
 - CSV Audit Export for compliance.
@@ -23,5 +36,3 @@ All notable changes to this project will be documented in this file.
 - Fail-closed Policy Engine (Spending caps, allowlists).
 - HITL (Human-in-the-Loop) thresholds.
 - MockSigner and Audit Logging.
-- LangChain, OpenAI, and MCP tool schemas.
-- Basic read-only dashboard.

@@ -77,6 +77,22 @@ client = ZerixClient(policy_engine=policy, signer=signer, provider=provider)
 
 *Read the full [Web3 Guide](docs/WEB3_GUIDE.md) for details.*
 
+## 🖥️ SaaS Platform (New in v0.5.0)
+
+Zerix now comes with a built-in SaaS Dashboard. You can register users, generate API keys, and monitor agent transactions in real-time.
+
+
+
+```bash
+
+python scripts/run_dashboard.py
+
+```
+
+Open `http://localhost:8000` to view the Landing Page, register an account, and access your protected dashboard.
+
+
+
 ## 📊 Dashboard
 
 Zerix comes with a built-in, zero-dependency dashboard to monitor your agents. 
