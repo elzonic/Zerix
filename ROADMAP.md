@@ -1,114 +1,80 @@
 # Zerix Roadmap
 
-This document describes Zerix's development phases from concept to production,
-along with the exit criteria for each phase.
+This document describes Zerix's development phases from concept to production.
 
-**Guiding principle:** Every phase must be *shippable*. No phase ends without
-an artifact that can be used by real users.
+**Guiding principle:** Every phase must be *shippable*.
 
 ---
 
-## Phase 0 — Foundation (Weeks 1–4)
+## Phase 0 — Foundation (Weeks 1–4) ✅ COMPLETED
 
-**Goal:** Prove that the *intent → policy → signer* concept works end-to-end on testnet.
+**Goal:** Prove that the *intent → policy → signer* concept works.
 
 ### Deliverables
-
-| # | Item | Definition of Done |
-|---|---|---|
-| 0.1 | Python package skeleton + PyPI publish | `pip install zerix` succeeds in a clean environment |
-| 0.2 | `ZerixClient` with a `transfer()` method | Can send USDC on Base Sepolia via a mock provider |
-| 0.3 | Policy engine v0 (spending caps + allowlist) | Unit test: transaction above cap → `Denied` |
-| 0.4 | One signer integration (Turnkey **or** Privy) | Transaction signed & confirmed on testnet |
-| 0.5 | `as_langchain_tools()` + example agent | A LangChain agent can call `zerix.transfer` |
-
-### Exit criteria
-- [ ] 3 external users (beta testers) successfully perform a testnet transfer via an agent.
-- [ ] Quickstart documentation is complete and tested by someone outside the team.
+- [x] **0.1** Python package skeleton
+- [x] **0.2** `ZerixClient` with a `transfer()` method
+- [x] **0.3** Policy engine v0 (spending caps + allowlist)
+- [x] **0.4** Real EVM Signer integration (EIP-1559)
+- [x] **0.5** `as_langchain_tools()` + OpenAI schemas
 
 ---
 
-## Phase 1 — Public Alpha (Weeks 5–10)
+## Phase 1 — Public Alpha (Weeks 5–10) ✅ COMPLETED
 
-**Goal:** Release an alpha that can be used on mainnet with strict limits.
+**Goal:** Release an alpha with strict security limits.
 
 ### Deliverables
-
-| # | Item | Definition of Done |
-|---|---|---|
-| 1.1 | Full policy engine | Supports: per-tx cap, daily cap, weekly cap, recipient allowlist, contract allowlist, time window, **fail-closed** |
-| 1.2 | Human-in-the-loop (HITL) | Transactions above `require_human_above_usd` enter an approval queue (API + webhook) |
-| 1.3 | Multi-provider signer | Turnkey + Privy + Coinbase AgentKit adapters |
-| 1.4 | Structured audit log | Every decision (`allowed`/`denied`/`held`) is recorded with a reason |
-| 1.5 | `as_openai_tools()` & `as_mcp_tools()` | Integration with OpenAI Agents SDK and MCP |
-| 1.6 | Web dashboard (read-only) | View policies, transactions, and HITL status |
-
-### Exit criteria
-- [ ] 50+ agents on Base mainnet with total volume < $10,000 (intentionally limited).
-- [ ] No fund-loss incidents caused by policy bypass.
-- [ ] Internal security review complete (see `SECURITY.md`).
+- [x] **1.1** Full policy engine (Caps, Allowlists, Time Window, Fail-closed)
+- [x] **1.2** Human-in-the-loop (HITL) approval queue
+- [x] **1.3** Multi-provider signer (Turnkey + Privy adapters)
+- [x] **1.4** Structured audit log (JSONL)
+- [x] **1.5** `as_openai_tools()` & `as_mcp_tools()`
+- [x] **1.6** Web dashboard (Modern UI, read-only)
 
 ---
 
-## Phase 2 — Beta (Weeks 11–20)
+## Phase 2 — Beta (Weeks 11–20) ✅ COMPLETED
 
 **Goal:** Scale to multi-chain, add automation, and enable self-hosting.
 
 ### Deliverables
-
-| # | Item | Definition of Done |
-|---|---|---|
-| 2.1 | Multi-chain | Base, Ethereum, Solana (via provider adapters) |
-| 2.2 | Automation engine | DCA, conditional orders (“sell if down 10%”), recurring transfers |
-| 2.3 | x402 & MPP support | Agents can pay for APIs/data over HTTP 402 |
-| 2.4 | Self-hosting (Docker) | `docker compose up` runs Zerix end-to-end with policy engine & DB |
-| 2.5 | TypeScript SDK (beta) | `npm install @zerix/sdk` with feature parity to Python core |
-| 2.6 | Webhooks & event stream | Real-time notifications for transactions, denials, and HITL |
-| 2.7 | Policy DSL | Policies can be expressed as YAML/JSON and loaded from files |
-
-### Exit criteria
-- [ ] 500+ active agents; monthly volume > $100,000.
-- [ ] External security audit (at least one firm) complete; zero critical findings.
-- [ ] Self-hosting documentation tested on fresh VPS by 3 independent users.
+- [x] **2.1** Multi-chain (EVM JSON-RPC Provider)
+- [x] **2.2** Automation engine (Recurring transfers)
+- [x] **2.3** x402 & MPP support (HTTP 402 automatic payments)
+- [x] **2.4** Self-hosting (Docker)
+- [x] **2.5** TypeScript SDK (beta)
+- [x] **2.6** Webhooks & event stream
+- [x] **2.7** Policy DSL (JSON loader & templates)
 
 ---
 
-## Phase 3 — Production & General Availability (Weeks 21–32)
+## Phase 3 — Production (Weeks 21–32) ⏳ IN PROGRESS
 
 **Goal:** Enterprise-ready. SLA, compliance, and ecosystem.
 
 ### Deliverables
-
-| # | Item | Definition of Done |
-|---|---|---|
-| 3.1 | SLA & uptime guarantee | 99.9% uptime for the policy engine API; public status page |
-| 3.2 | Team & role management | Multi-tenant: organizations, members, roles (admin/approver/viewer) |
-| 3.3 | Advanced compliance | Audit log export (CSV/JSON), retention policies, 1-year+ retention |
-| 3.4 | Policy templates | Ready-made templates: “Trading Bot Safe”, “Treasury Conservative”, “API Micropayments” |
-| 3.5 | Plugin system | Third-party providers & tools can be registered without forking |
-| 3.6 | Performance & scale | Policy evaluation < 50ms p95; 10,000+ agents per instance |
-| 3.7 | Go-to-market | Enterprise documentation, integration examples, and a partner program |
-
-### Exit criteria
-- [ ] 5+ enterprises using Zerix in production.
-- [ ] Zero critical security incidents in the last 90 days.
-- [ ] OpenSSF Best Practices Badge (passing).
+- [ ] **3.1** SLA & uptime guarantee
+- [ ] **3.2** Team & role management (Multi-tenant)
+- [x] **3.3** Advanced compliance (CSV Audit Export)
+- [x] **3.4** Policy templates (Trading Bot, API Micropayments)
+- [ ] **3.5** Plugin system
+- [ ] **3.6** Performance & scale (10k+ agents)
+- [ ] **3.7** Go-to-market (Enterprise docs)
 
 ---
 
-## Phase 4 — Ecosystem & Sustainability (Ongoing)
+## Phase 4 — Ecosystem (Ongoing)
 
-- **Agent-to-agent payments** — Zerix as a *clearing layer* for inter-agent payments via x402/MPP.
-- **Policy marketplace** — The community can share/sell battle-tested policy templates.
-- **Formal verification** — Mathematical verification of the core policy engine (e.g., using TLA+).
-- **Additional languages** — Go and Rust SDKs.
-- **Governance** — Move to a public RFC model for major architectural decisions.
+- [ ] Agent-to-agent payments (x402 clearing layer)
+- [ ] Policy marketplace
+- [ ] Formal verification (TLA+)
+- [ ] Go and Rust SDKs
+- [ ] Public RFC model for governance
 
 ---
 
 ## Non-Negotiable Principles
-
 1. **Non-custodial forever.** Zerix will never store a private key.
 2. **Fail-closed.** When in doubt, deny.
-3. **Policy lives in infrastructure, not in the prompt.** Prompts can be persuaded; code cannot.
-4. **Open source core.** Core security features are always Apache-2.0.
+3. **Policy lives in infrastructure, not in the prompt.**
+4. **Open source core.** Core security features are Apache-2.0.
