@@ -1,0 +1,15 @@
+{
+  "spending_cap": {
+    "per_tx_usd": "10.00",
+    "daily_usd": "50.00",
+    "require_human_above_usd": "8.00"
+  },
+  "allowlist": {
+    "recipients": ["0xAllowedAddress1", "0xAllowedAddress2"],
+    "contracts": ["0xUniswapRouter"]
+  },
+  "time_window": {
+    "start_hour": 8,
+    "end_hour": 17
+  }
+}
