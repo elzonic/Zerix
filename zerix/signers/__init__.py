@@ -2,5 +2,6 @@
 
 from .base import BaseSigner
 from .mock import MockSigner
+from .evm import EVMSigner
 
-__all__ = ["BaseSigner", "MockSigner"]
+__all__ = ["BaseSigner", "MockSigner", "EVMSigner"]

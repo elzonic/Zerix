@@ -11,7 +11,7 @@ requires-python = ">=3.10"
 authors = [{ name = "elzonic" }]
 license = { text = "Apache-2.0" }
 keywords = ["ai", "agents", "wallet", "security", "langchain", "openai", "web3"]
-dependencies = []
+dependencies = ["eth-account"]
 
 classifiers = [
     "Development Status :: 4 - Beta",

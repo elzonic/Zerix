@@ -7,6 +7,7 @@ from .policy.rules import Allowlist, SpendingCap, TimeWindow
 from .policy.loader import load_policy_from_json
 from .signers.base import BaseSigner
 from .signers.mock import MockSigner
+from .signers.evm import EVMSigner
 from .audit.logger import AuditLogger
 from .providers.base import BaseProvider
 from .providers.mock import MockProvider
@@ -28,6 +29,7 @@ __all__ = [
     "load_policy_from_json",
     "BaseSigner",
     "MockSigner",
+    "EVMSigner",
     "AuditLogger",
     "BaseProvider",
     "MockProvider",
