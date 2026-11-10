@@ -49,6 +49,12 @@ class DashboardHandler(BaseHTTPRequestHandler):
         elif self.path == '/dashboard.html':
             filepath = 'web/dashboard.html'
             content_type = 'text/html'
+        elif self.path == '/login.html':
+            filepath = 'web/login.html'
+            content_type = 'text/html'
+        elif self.path == '/login.html':
+            filepath = 'web/login.html'
+            content_type = 'text/html'
         elif self.path == '/style.css':
             filepath = 'web/style.css'
             content_type = 'text/css'
