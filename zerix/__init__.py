@@ -19,7 +19,7 @@ from .templates import load_template
 from .x402.handler import X402Handler
 from .database import init_db, create_user, get_user_by_api_key, generate_api_key
 
-__version__ = "0.5.0"
+__version__ = "0.6.0"
 
 __all__ = [
     "ZerixClient", "PolicyEngine", "SpendingCap", "Allowlist", "TimeWindow", "Decision", "Outcome", "PolicyDenied",
