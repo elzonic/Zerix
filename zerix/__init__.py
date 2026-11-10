@@ -8,7 +8,7 @@ from .signers.base import BaseSigner
 from .signers.mock import MockSigner
 from .audit.logger import AuditLogger
 
-__version__ = "0.0.1"
+__version__ = "0.1.0"
 
 __all__ = [
     "ZerixClient",
