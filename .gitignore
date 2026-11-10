@@ -31,3 +31,5 @@ audit.jsonl
 dist/
 build/
 *.egg-info/
+zerix.db
+audit.jsonl
