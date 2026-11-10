@@ -1,4 +1,4 @@
-"""LangChain and OpenAI-compatible tools for Zerix."""
+"""LangChain, OpenAI, and MCP-compatible tools for Zerix."""
 
 from decimal import Decimal
 from typing import Any
@@ -14,9 +14,6 @@ def create_transfer_tool(client: ZerixClient):
         Args:
             to: The blockchain address of the recipient.
             amount_usd: The amount to send in USD (e.g., "5.00").
-            
-        Returns:
-            A dictionary containing the outcome and reason.
         """
         try:
             amount = Decimal(amount_usd)
@@ -39,20 +36,30 @@ def get_openai_tool_schema() -> dict[str, Any]:
         "type": "function",
         "function": {
             "name": "zerix_transfer",
-            "description": "Transfer USDC to a recipient, subject to Zerix security policy. Always returns a status (allowed, denied, or held).",
+            "description": "Transfer USDC to a recipient, subject to Zerix security policy.",
             "parameters": {
                 "type": "object",
                 "properties": {
-                    "to": {
-                        "type": "string",
-                        "description": "The blockchain address of the recipient."
-                    },
-                    "amount_usd": {
-                        "type": "string",
-                        "description": "The amount to send in USD as a string (e.g., '5.50')."
-                    }
+                    "to": {"type": "string", "description": "The recipient address."},
+                    "amount_usd": {"type": "string", "description": "Amount in USD (e.g. '5.00')."}
                 },
                 "required": ["to", "amount_usd"]
             }
         }
     }
+
+
+def get_mcp_tool_schema() -> list[dict[str, Any]]:
+    """Returns the JSON schema for Model Context Protocol (MCP) tools."""
+    return [{
+        "name": "zerix_transfer",
+        "description": "Transfer USDC to a recipient, subject to Zerix security policy.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "to": {"type": "string", "description": "The recipient address."},
+                "amount_usd": {"type": "string", "description": "Amount in USD (e.g. '5.00')."}
+            },
+            "required": ["to", "amount_usd"]
+        }
+    }]
