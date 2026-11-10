@@ -53,7 +53,6 @@
         .badge.held { border-color: rgba(245, 158, 11, 0.3); color: var(--warning); }
         .badge.held .badge-dot { background: var(--warning); }
 
-        /* Mobile layout hidden on desktop */
         .mobile-header { display: none; }
         .mobile-page-title { display: none; }
         .mobile-stats-container { display: none; }
@@ -78,12 +77,11 @@
             .content { padding: 0 1.25rem 1.25rem; }
             .stats-row { display: none; } 
             
-            /* Merge Stats into One Card with Bottom Border */
             .mobile-stats-container {
                 display: flex; justify-content: space-between; align-items: center;
                 background: var(--surface); border: 1px solid var(--border);
                 border-radius: 24px; padding: 1.25rem; margin-bottom: 2rem;
-                border-bottom: 1px solid var(--border-light); /* Garis pembatas */
+                border-bottom: 1px solid var(--border-light);
             }
             .m-stat-col { flex: 1; text-align: center; }
             .m-stat-col:not(:last-child) { border-right: 1px solid var(--border); }
@@ -93,9 +91,6 @@
             .desktop-table { display: none; } 
             .mobile-feed { display: flex; flex-direction: column; gap: 0.75rem; padding-bottom: 5rem; }
             .feed-item { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 1rem; animation: fadeInUp 0.5s ease forwards; opacity: 0; }
-            .feed-item:nth-child(1) { animation-delay: 0.1s; }
-            .feed-item:nth-child(2) { animation-delay: 0.2s; }
-            .feed-item:nth-child(3) { animation-delay: 0.3s; }
             
             .feed-item-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
             .feed-item-row:last-child { margin-bottom: 0; }
@@ -159,16 +154,15 @@
 
             <div class="content">
                 <div class="stats-row">
-                    <div class="stat-box"><span class="label">Allowed Txns</span><div class="number">1,248</div></div>
-                    <div class="stat-box"><span class="label">Denied Txns</span><div class="number">42</div></div>
-                    <div class="stat-box"><span class="label">Held (HITL)</span><div class="number" style="color: var(--warning);">3</div></div>
+                    <div class="stat-box"><span class="label">Allowed Txns</span><div class="number" id="stat-allowed">0</div></div>
+                    <div class="stat-box"><span class="label">Denied Txns</span><div class="number" id="stat-denied">0</div></div>
+                    <div class="stat-box"><span class="label">Held (HITL)</span><div class="number" id="stat-held" style="color: var(--warning);">0</div></div>
                 </div>
 
-                <!-- Merged Mobile Stats Card -->
                 <div class="mobile-stats-container">
-                    <div class="m-stat-col"><span class="label">Allowed</span><div class="num">1,248</div></div>
-                    <div class="m-stat-col"><span class="label">Denied</span><div class="num">42</div></div>
-                    <div class="m-stat-col"><span class="label">Held</span><div class="num" style="color: var(--warning);">3</div></div>
+                    <div class="m-stat-col"><span class="label">Allowed</span><div class="num" id="m-stat-allowed">0</div></div>
+                    <div class="m-stat-col"><span class="label">Denied</span><div class="num" id="m-stat-denied">0</div></div>
+                    <div class="m-stat-col"><span class="label">Held</span><div class="num" id="m-stat-held" style="color: var(--warning);">0</div></div>
                 </div>
 
                 <div class="desktop-table">
@@ -181,62 +175,15 @@
                                 <th style="width: 35%;">Reason / TxHash</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td><span class="badge allowed"><div class="badge-dot"></div>Allowed</span></td>
-                                <td class="mono" style="color: var(--text-muted);">0x123...abc</td>
-                                <td class="mono">$2.50</td>
-                                <td class="mono" style="color: var(--text-muted);">0xmock_abc123</td>
-                            </tr>
-                            <tr>
-                                <td><span class="badge denied"><div class="badge-dot"></div>Denied</span></td>
-                                <td class="mono" style="color: var(--text-muted);">0x999...evil</td>
-                                <td class="mono">$50.00</td>
-                                <td style="color: var(--text-muted);">Exceeds per-tx cap</td>
-                            </tr>
-                            <tr>
-                                <td><span class="badge held"><div class="badge-dot"></div>Held</span></td>
-                                <td class="mono" style="color: var(--text-muted);">0x888...friend</td>
-                                <td class="mono">$8.00</td>
-                                <td style="color: var(--text-muted);">Requires human approval</td>
-                            </tr>
+                        <tbody id="desktop-table-body">
+                            <!-- Diisi oleh JavaScript -->
+                            <tr><td colspan="4" style="text-align: center; color: var(--text-muted);">Memuat data...</td></tr>
                         </tbody>
                     </table>
                 </div>
 
-                <div class="mobile-feed">
-                    <div class="feed-item">
-                        <div class="feed-item-row">
-                            <span class="badge allowed"><div class="badge-dot"></div>Allowed</span>
-                            <span class="feed-amount" style="color: var(--text-main);">$2.50</span>
-                        </div>
-                        <div class="feed-item-row"><span class="feed-addr">0x123...abc</span></div>
-                        <div class="feed-item-row" style="margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px solid var(--border);">
-                            <span class="feed-detail">Tx: 0xmock_abc123</span>
-                        </div>
-                    </div>
-
-                    <div class="feed-item">
-                        <div class="feed-item-row">
-                            <span class="badge denied"><div class="badge-dot"></div>Denied</span>
-                            <span class="feed-amount" style="color: var(--text-main);">$50.00</span>
-                        </div>
-                        <div class="feed-item-row"><span class="feed-addr">0x999...evil</span></div>
-                        <div class="feed-item-row" style="margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px solid var(--border);">
-                            <span class="feed-detail" style="color: var(--danger);">Exceeds per-tx cap</span>
-                        </div>
-                    </div>
-
-                    <div class="feed-item">
-                        <div class="feed-item-row">
-                            <span class="badge held"><div class="badge-dot"></div>Held</span>
-                            <span class="feed-amount" style="color: var(--text-main);">$8.00</span>
-                        </div>
-                        <div class="feed-item-row"><span class="feed-addr">0x888...friend</span></div>
-                        <div class="feed-item-row" style="margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px solid var(--border);">
-                            <span class="feed-detail" style="color: var(--warning);">Requires human approval</span>
-                        </div>
-                    </div>
+                <div class="mobile-feed" id="mobile-feed-body">
+                    <!-- Diisi oleh JavaScript -->
                 </div>
             </div>
         </main>
@@ -247,20 +194,93 @@
     </div>
 
     <script>
+        // Toggle Sidebar Mobile
         const btn = document.getElementById('hamburger-btn');
         const sidebar = document.getElementById('sidebar');
         const overlay = document.getElementById('overlay');
+        function toggleMenu() { btn.classList.toggle('active'); sidebar.classList.toggle('open'); overlay.classList.toggle('show'); }
+        if(btn && sidebar && overlay) { btn.addEventListener('click', toggleMenu); overlay.addEventListener('click', toggleMenu); }
 
-        function toggleMenu() {
-            btn.classList.toggle('active');
-            sidebar.classList.toggle('open');
-            overlay.classList.toggle('show');
+        // Fungsi untuk mengambil dan merender data dari Python Backend
+        async function fetchAuditData() {
+            try {
+                const response = await fetch('/api/audit');
+                const data = await response.json();
+                renderDashboard(data);
+            } catch (error) {
+                console.error("Gagal mengambil data:", error);
+            }
         }
 
-        if(btn && sidebar && overlay) {
-            btn.addEventListener('click', toggleMenu);
-            overlay.addEventListener('click', toggleMenu);
+        function renderDashboard(data) {
+            const desktopBody = document.getElementById('desktop-table-body');
+            const mobileFeed = document.getElementById('mobile-feed-body');
+            
+            let allowed = 0, denied = 0, held = 0;
+            let desktopHTML = "";
+            let mobileHTML = "";
+
+            if (data.length === 0) {
+                desktopBody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: var(--text-muted);">Belum ada transaksi.</td></tr>';
+                mobileFeed.innerHTML = '<div style="text-align: center; color: var(--text-muted); padding: 2rem;">Belum ada transaksi.</div>';
+                return;
+            }
+
+            // Render terbalik (yang terbaru di atas)
+            data.reverse().forEach(tx => {
+                const action = tx.action || '';
+                let badgeClass = '';
+                let statusText = '';
+
+                if (action === 'transfer_allowed') { allowed++; badgeClass = 'allowed'; statusText = 'Allowed'; }
+                else if (action === 'transfer_denied') { denied++; badgeClass = 'denied'; statusText = 'Denied'; }
+                else if (action === 'transfer_held') { held++; badgeClass = 'held'; statusText = 'Held'; }
+                else return;
+
+                const to = tx.to || '';
+                const amount = tx.amount_usd || '';
+                const detail = tx.reason || tx.tx_hash || '';
+
+                // Desktop HTML
+                desktopHTML += `
+                    <tr>
+                        <td><span class="badge ${badgeClass}"><div class="badge-dot"></div>${statusText}</span></td>
+                        <td class="mono" style="color: var(--text-muted);">${to}</td>
+                        <td class="mono">$${amount}</td>
+                        <td class="mono" style="color: var(--text-muted);">${detail}</td>
+                    </tr>
+                `;
+
+                // Mobile HTML
+                mobileHTML += `
+                    <div class="feed-item">
+                        <div class="feed-item-row">
+                            <span class="badge ${badgeClass}"><div class="badge-dot"></div>${statusText}</span>
+                            <span class="feed-amount" style="color: var(--text-main);">$${amount}</span>
+                        </div>
+                        <div class="feed-item-row"><span class="feed-addr">${to}</span></div>
+                        <div class="feed-item-row" style="margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px solid var(--border);">
+                            <span class="feed-detail">${detail}</span>
+                        </div>
+                    </div>
+                `;
+            });
+
+            // Update DOM
+            desktopBody.innerHTML = desktopHTML;
+            mobileFeed.innerHTML = mobileHTML;
+
+            // Update Stats
+            document.getElementById('stat-allowed').innerText = allowed;
+            document.getElementById('stat-denied').innerText = denied;
+            document.getElementById('stat-held').innerText = held;
+            document.getElementById('m-stat-allowed').innerText = allowed;
+            document.getElementById('m-stat-denied').innerText = denied;
+            document.getElementById('m-stat-held').innerText = held;
         }
+
+        // Panggil API setiap kali halaman dimuat
+        window.onload = fetchAuditData;
     </script>
 </body>
 </html>
