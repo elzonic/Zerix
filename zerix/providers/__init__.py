@@ -2,5 +2,6 @@
 
 from .base import BaseProvider
 from .mock import MockProvider
+from .rpc import JSONRPCProvider
 
-__all__ = ["BaseProvider", "MockProvider"]
+__all__ = ["BaseProvider", "MockProvider", "JSONRPCProvider"]
