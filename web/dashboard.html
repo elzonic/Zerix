@@ -6,6 +6,7 @@
     <title>Zerix Dashboard</title>
     <link rel="stylesheet" href="style.css">
     <style>
+        /* ... (CSS Anda sebelumnya tetap sama) ... */
         .app-layout { display: flex; height: 100vh; overflow: hidden; background: var(--bg); }
         .sidebar { width: 260px; border-right: 1px solid var(--border); background: var(--surface); display: flex; flex-direction: column; z-index: 50; transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
         .sidebar-header { height: 64px; display: flex; align-items: center; padding: 0 1.5rem; border-bottom: 1px solid var(--border); }
@@ -45,11 +46,8 @@
         .badge.denied .badge-dot { background: var(--danger); }
         .badge.held { border-color: rgba(245, 158, 11, 0.3); color: var(--warning); }
         .badge.held .badge-dot { background: var(--warning); }
-        
         .btn-approve { background: var(--primary); color: white; border: none; padding: 0.3rem 0.8rem; border-radius: 6px; font-size: 0.75rem; font-weight: 600; cursor: pointer; transition: 0.2s; margin-left: 0.5rem; }
         .btn-approve:hover { background: var(--primary-hover); }
-        
-        /* Modals */
         .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 1000; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.2s; }
         .modal-overlay.show { display: flex; opacity: 1; }
         .modal-box { background: var(--surface); border: 1px solid var(--border-light); border-radius: 16px; padding: 1.5rem; max-width: 400px; width: 90%; transform: translateY(10px); transition: transform 0.2s; }
@@ -60,7 +58,6 @@
         .btn-modal-cancel { background: transparent; border: 1px solid var(--border-light); color: var(--text-main); padding: 0.4rem 1rem; border-radius: 6px; cursor: pointer; font-size: 0.875rem; }
         .btn-modal-confirm { background: var(--primary); border: none; color: white; padding: 0.4rem 1rem; border-radius: 6px; cursor: pointer; font-size: 0.875rem; font-weight: 600; }
         .btn-modal-confirm:hover { background: var(--primary-hover); }
-
         .mobile-header { display: none; }
         .mobile-page-title { display: none; }
         .mobile-stats-container { display: none; }
@@ -68,7 +65,6 @@
         .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); z-index: 40; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
         .fab { display: none; position: fixed; bottom: 1.5rem; right: 1.5rem; width: 56px; height: 56px; border-radius: 50%; background: var(--primary); color: white; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4); z-index: 35; transition: transform 0.2s, background 0.2s; cursor: pointer; border: none; }
         .fab:hover { background: var(--primary-hover); transform: scale(1.05); }
-
         @media (max-width: 768px) {
             .sidebar { position: fixed; top: 0; left: 0; height: 100vh; transform: translateX(-100%); width: 280px; }
             .sidebar.open { transform: translateX(0); }
@@ -99,7 +95,6 @@
 </head>
 <body>
 
-    <!-- MODAL POPUP -->
     <div class="modal-overlay" id="confirm-modal">
         <div class="modal-box">
             <h3 class="modal-title">Approve Transaction</h3>
@@ -198,14 +193,18 @@
     </div>
 
     <script>
-        // Sidebar Mobile
+        // Simulasi API Key untuk demo (biasanya didapat setelah login/registrasi)
+        // Jika belum ada di localStorage, kita set "dev_mode"
+        if (!localStorage.getItem('zerix_api_key')) {
+            localStorage.setItem('zerix_api_key', 'dev_mode');
+        }
+
         const btn = document.getElementById('hamburger-btn');
         const sidebar = document.getElementById('sidebar');
         const overlay = document.getElementById('overlay');
         function toggleMenu() { btn.classList.toggle('active'); sidebar.classList.toggle('open'); overlay.classList.toggle('show'); }
         if(btn && sidebar && overlay) { btn.addEventListener('click', toggleMenu); overlay.addEventListener('click', toggleMenu); }
 
-        // Custom Modal Logic
         let pendingApprovalTs = null;
         const modal = document.getElementById('confirm-modal');
         const confirmBtn = document.getElementById('modal-confirm-btn');
@@ -225,24 +224,27 @@
             try {
                 const response = await fetch('/api/approve', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 'Content-Type': 'application/json', 'X-API-Key': localStorage.getItem('zerix_api_key') },
                     body: JSON.stringify({ timestamp: pendingApprovalTs })
                 });
-                if(response.ok) {
-                    closeModal();
-                    fetchAuditData();
-                } else {
-                    alert("Failed to approve transaction.");
-                }
-            } catch (error) {
-                console.error(error);
-            }
+                if(response.ok) { closeModal(); fetchAuditData(); } else { alert("Failed to approve transaction."); }
+            } catch (error) { console.error(error); }
             confirmBtn.innerText = "Yes, Approve";
         };
 
         async function fetchAuditData() {
             try {
-                const response = await fetch('/api/audit');
+                // Mengirim API Key di Header
+                const apiKey = localStorage.getItem('zerix_api_key');
+                const response = await fetch('/api/audit', {
+                    headers: { 'X-API-Key': apiKey }
+                });
+                
+                if (!response.ok) {
+                    document.getElementById('desktop-table-body').innerHTML = '<tr><td colspan="4" style="text-align: center; color: var(--danger);">Unauthorized. Invalid API Key.</td></tr>';
+                    return;
+                }
+
                 const data = await response.json();
                 renderDashboard(data);
             } catch (error) {
@@ -273,17 +275,13 @@
 
             data.reverse().forEach(tx => {
                 const action = tx.action || '';
-                let badgeClass = '';
-                let statusText = '';
+                let badgeClass = '', statusText = '';
 
                 if (action === 'transfer_allowed') { allowed++; badgeClass = 'allowed'; statusText = 'Allowed'; }
                 else if (action === 'transfer_denied') { denied++; badgeClass = 'denied'; statusText = 'Denied'; }
                 else if (action === 'transfer_held') {
-                    if (approvedTimestamps.has(tx.timestamp)) {
-                        allowed++; badgeClass = 'allowed'; statusText = 'Approved'; 
-                    } else {
-                        held++; badgeClass = 'held'; statusText = 'Held'; 
-                    }
+                    if (approvedTimestamps.has(tx.timestamp)) { allowed++; badgeClass = 'allowed'; statusText = 'Approved'; } 
+                    else { held++; badgeClass = 'held'; statusText = 'Held'; }
                 } else return;
 
                 const to = tx.to || '';
@@ -292,13 +290,8 @@
                 const ts = tx.timestamp || 0;
 
                 const isPending = (action === 'transfer_held' && !approvedTimestamps.has(tx.timestamp));
-                
-                const approveBtnDesktop = isPending 
-                    ? `<button class="btn-approve" onclick="openModal(${ts})">Approve</button>` 
-                    : '';
-                const approveBtnMobile = isPending 
-                    ? `<button class="btn-approve" onclick="openModal(${ts})" style="width: 100%; margin-top: 0.5rem;">Approve Transaction</button>` 
-                    : '';
+                const approveBtnDesktop = isPending ? `<button class="btn-approve" onclick="openModal(${ts})">Approve</button>` : '';
+                const approveBtnMobile = isPending ? `<button class="btn-approve" onclick="openModal(${ts})" style="width: 100%; margin-top: 0.5rem;">Approve Transaction</button>` : '';
 
                 desktopHTML += `
                     <tr>
