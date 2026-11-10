@@ -12,38 +12,31 @@
         .sidebar-content { padding: 1.5rem 1rem; flex: 1; display: flex; flex-direction: column; gap: 1.5rem; }
         .nav-group { display: flex; flex-direction: column; gap: 0.25rem; }
         .nav-group > span { font-size: 0.7rem; color: var(--text-muted); font-weight: 600; padding: 0 0.75rem; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em;}
-        
         .nav-link { display: flex; align-items: flex-start; gap: 0.75rem; padding: 0.75rem; border-radius: 12px; color: var(--text-muted); transition: all 0.2s ease; }
         .nav-link svg { margin-top: 2px; }
         .nav-link-content { display: flex; flex-direction: column; }
         .nav-link-title { font-size: 0.875rem; font-weight: 500; color: var(--text-main); display: flex; align-items: center; }
         .nav-link-desc { font-size: 0.7rem; color: var(--text-muted); margin-top: 2px; font-weight: 400; line-height: 1.2; }
-        
         .nav-link:hover { background: var(--surface-hover); }
         .nav-link.active { background: var(--surface-hover); }
         .nav-link.active .nav-link-title { color: var(--text-main); }
-
         .main-wrap { flex: 1; display: flex; flex-direction: column; overflow-y: auto; width: 100%; scroll-behavior: smooth; }
         .topbar { height: 80px; display: flex; justify-content: space-between; align-items: center; padding: 0 2rem; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(12px); z-index: 10; }
         .topbar-left { display: flex; flex-direction: column; gap: 0.25rem; }
         .topbar h1 { font-size: 1.25rem; font-weight: 600; line-height: 1.2; }
         .topbar p { font-size: 0.8rem; color: var(--text-muted); }
-        
         .content { padding: 2rem; max-width: 1200px; margin: 0 auto; width: 100%; }
-        
         .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 2rem; }
         .stat-box { background: var(--surface); border: 1px solid var(--border); border-radius: 32px; padding: 1.5rem; transition: transform 0.2s; }
         .stat-box:hover { transform: translateY(-2px); border-color: var(--border-light); }
         .stat-box .label { font-size: 0.75rem; color: var(--text-muted); font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem; display: block;}
         .stat-box .number { font-size: 2rem; font-weight: 700; letter-spacing: -0.03em; }
-
         .desktop-table { background: var(--surface); border: 1px solid var(--border); border-radius: 24px; overflow: hidden; }
         table { width: 100%; border-collapse: collapse; text-align: left; }
         th { padding: 1rem 1.5rem; font-size: 0.75rem; color: var(--text-muted); border-bottom: 1px solid var(--border); font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; }
         td { padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border); font-size: 0.875rem; }
         tr:last-child td { border-bottom: none; }
         tr:hover td { background: var(--surface-hover); }
-
         .badge { display: inline-flex; align-items: center; padding: 0.25rem 0.6rem; border-radius: 999px; font-size: 0.75rem; font-weight: 600; border: 1px solid var(--border-light); }
         .badge-dot { width: 6px; height: 6px; border-radius: 50%; margin-right: 0.4rem; }
         .badge.allowed { border-color: rgba(16, 185, 129, 0.3); color: var(--success); }
@@ -52,58 +45,71 @@
         .badge.denied .badge-dot { background: var(--danger); }
         .badge.held { border-color: rgba(245, 158, 11, 0.3); color: var(--warning); }
         .badge.held .badge-dot { background: var(--warning); }
+        
+        .btn-approve { background: var(--primary); color: white; border: none; padding: 0.3rem 0.8rem; border-radius: 6px; font-size: 0.75rem; font-weight: 600; cursor: pointer; transition: 0.2s; margin-left: 0.5rem; }
+        .btn-approve:hover { background: var(--primary-hover); }
+        
+        /* Modals */
+        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 1000; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.2s; }
+        .modal-overlay.show { display: flex; opacity: 1; }
+        .modal-box { background: var(--surface); border: 1px solid var(--border-light); border-radius: 16px; padding: 1.5rem; max-width: 400px; width: 90%; transform: translateY(10px); transition: transform 0.2s; }
+        .modal-overlay.show .modal-box { transform: translateY(0); }
+        .modal-title { font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem; }
+        .modal-desc { font-size: 0.875rem; color: var(--text-muted); margin-bottom: 1.5rem; line-height: 1.5; }
+        .modal-actions { display: flex; justify-content: flex-end; gap: 0.5rem; }
+        .btn-modal-cancel { background: transparent; border: 1px solid var(--border-light); color: var(--text-main); padding: 0.4rem 1rem; border-radius: 6px; cursor: pointer; font-size: 0.875rem; }
+        .btn-modal-confirm { background: var(--primary); border: none; color: white; padding: 0.4rem 1rem; border-radius: 6px; cursor: pointer; font-size: 0.875rem; font-weight: 600; }
+        .btn-modal-confirm:hover { background: var(--primary-hover); }
 
         .mobile-header { display: none; }
         .mobile-page-title { display: none; }
         .mobile-stats-container { display: none; }
         .mobile-feed { display: none; }
         .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); z-index: 40; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
-        
         .fab { display: none; position: fixed; bottom: 1.5rem; right: 1.5rem; width: 56px; height: 56px; border-radius: 50%; background: var(--primary); color: white; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4); z-index: 35; transition: transform 0.2s, background 0.2s; cursor: pointer; border: none; }
         .fab:hover { background: var(--primary-hover); transform: scale(1.05); }
-        .fab:active { transform: scale(0.95); }
 
         @media (max-width: 768px) {
             .sidebar { position: fixed; top: 0; left: 0; height: 100vh; transform: translateX(-100%); width: 280px; }
             .sidebar.open { transform: translateX(0); }
             .sidebar-overlay.show { display: block; opacity: 1; pointer-events: auto; }
-
             .topbar { display: none; }
             .mobile-header { display: flex; justify-content: space-between; align-items: center; height: 64px; padding: 0 1.25rem; border-bottom: 1px solid var(--border); background: rgba(0,0,0,0.9); backdrop-filter: blur(12px); position: sticky; top: 0; z-index: 30; }
             .mobile-page-title { display: block; padding: 1.25rem 1.25rem 1rem; }
             .mobile-page-title h1 { font-size: 1.25rem; font-weight: 600; margin-bottom: 0.25rem; }
             .mobile-page-title p { font-size: 0.8rem; color: var(--text-muted); line-height: 1.4; }
-
             .content { padding: 0 1.25rem 1.25rem; }
             .stats-row { display: none; } 
-            
-            .mobile-stats-container {
-                display: flex; justify-content: space-between; align-items: center;
-                background: var(--surface); border: 1px solid var(--border);
-                border-radius: 24px; padding: 1.25rem; margin-bottom: 2rem;
-                border-bottom: 1px solid var(--border-light);
-            }
+            .mobile-stats-container { display: flex; justify-content: space-between; align-items: center; background: var(--surface); border: 1px solid var(--border); border-radius: 24px; padding: 1.25rem; margin-bottom: 2rem; border-bottom: 1px solid var(--border-light); }
             .m-stat-col { flex: 1; text-align: center; }
             .m-stat-col:not(:last-child) { border-right: 1px solid var(--border); }
             .m-stat-col .label { font-size: 0.65rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; margin-bottom: 0.25rem; display: block; }
             .m-stat-col .num { font-size: 1.25rem; font-weight: 700; }
-
             .desktop-table { display: none; } 
             .mobile-feed { display: flex; flex-direction: column; gap: 0.75rem; padding-bottom: 5rem; }
-            .feed-item { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 1rem; animation: fadeInUp 0.5s ease forwards; opacity: 0; }
-            
+            .feed-item { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 1rem; }
             .feed-item-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
             .feed-item-row:last-child { margin-bottom: 0; }
-            
             .feed-amount { font-size: 1rem; font-weight: 600; font-family: 'JetBrains Mono', monospace; }
             .feed-addr { font-size: 0.8rem; color: var(--text-main); font-family: 'JetBrains Mono', monospace; }
             .feed-detail { font-size: 0.75rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; }
-
             .fab { display: flex; }
         }
     </style>
 </head>
 <body>
+
+    <!-- MODAL POPUP -->
+    <div class="modal-overlay" id="confirm-modal">
+        <div class="modal-box">
+            <h3 class="modal-title">Approve Transaction</h3>
+            <p class="modal-desc">Are you sure you want to approve this transaction? Funds will be sent to the recipient.</p>
+            <div class="modal-actions">
+                <button class="btn-modal-cancel" onclick="closeModal()">Cancel</button>
+                <button class="btn-modal-confirm" id="modal-confirm-btn">Yes, Approve</button>
+            </div>
+        </div>
+    </div>
 
     <div class="app-layout">
         <div class="sidebar-overlay" id="overlay"></div>
@@ -176,14 +182,12 @@
                             </tr>
                         </thead>
                         <tbody id="desktop-table-body">
-                            <!-- Diisi oleh JavaScript -->
-                            <tr><td colspan="4" style="text-align: center; color: var(--text-muted);">Memuat data...</td></tr>
+                            <tr><td colspan="4" style="text-align: center; color: var(--text-muted);">Loading data...</td></tr>
                         </tbody>
                     </table>
                 </div>
 
                 <div class="mobile-feed" id="mobile-feed-body">
-                    <!-- Diisi oleh JavaScript -->
                 </div>
             </div>
         </main>
@@ -194,21 +198,55 @@
     </div>
 
     <script>
-        // Toggle Sidebar Mobile
+        // Sidebar Mobile
         const btn = document.getElementById('hamburger-btn');
         const sidebar = document.getElementById('sidebar');
         const overlay = document.getElementById('overlay');
         function toggleMenu() { btn.classList.toggle('active'); sidebar.classList.toggle('open'); overlay.classList.toggle('show'); }
         if(btn && sidebar && overlay) { btn.addEventListener('click', toggleMenu); overlay.addEventListener('click', toggleMenu); }
 
-        // Fungsi untuk mengambil dan merender data dari Python Backend
+        // Custom Modal Logic
+        let pendingApprovalTs = null;
+        const modal = document.getElementById('confirm-modal');
+        const confirmBtn = document.getElementById('modal-confirm-btn');
+
+        function openModal(timestamp) {
+            pendingApprovalTs = timestamp;
+            modal.classList.add('show');
+        }
+        function closeModal() {
+            pendingApprovalTs = null;
+            modal.classList.remove('show');
+        }
+
+        confirmBtn.onclick = async () => {
+            if(!pendingApprovalTs) return;
+            confirmBtn.innerText = "Approving...";
+            try {
+                const response = await fetch('/api/approve', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ timestamp: pendingApprovalTs })
+                });
+                if(response.ok) {
+                    closeModal();
+                    fetchAuditData();
+                } else {
+                    alert("Failed to approve transaction.");
+                }
+            } catch (error) {
+                console.error(error);
+            }
+            confirmBtn.innerText = "Yes, Approve";
+        };
+
         async function fetchAuditData() {
             try {
                 const response = await fetch('/api/audit');
                 const data = await response.json();
                 renderDashboard(data);
             } catch (error) {
-                console.error("Gagal mengambil data:", error);
+                console.error("Failed to fetch data:", error);
             }
         }
 
@@ -221,12 +259,18 @@
             let mobileHTML = "";
 
             if (data.length === 0) {
-                desktopBody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: var(--text-muted);">Belum ada transaksi.</td></tr>';
-                mobileFeed.innerHTML = '<div style="text-align: center; color: var(--text-muted); padding: 2rem;">Belum ada transaksi.</div>';
+                desktopBody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: var(--text-muted);">No transactions found.</td></tr>';
+                mobileFeed.innerHTML = '<div style="text-align: center; color: var(--text-muted); padding: 2rem;">No transactions found.</div>';
                 return;
             }
 
-            // Render terbalik (yang terbaru di atas)
+            const approvedTimestamps = new Set();
+            data.forEach(tx => {
+                if (tx.action === 'transfer_allowed' && tx.original_timestamp) {
+                    approvedTimestamps.add(tx.original_timestamp);
+                }
+            });
+
             data.reverse().forEach(tx => {
                 const action = tx.action || '';
                 let badgeClass = '';
@@ -234,24 +278,37 @@
 
                 if (action === 'transfer_allowed') { allowed++; badgeClass = 'allowed'; statusText = 'Allowed'; }
                 else if (action === 'transfer_denied') { denied++; badgeClass = 'denied'; statusText = 'Denied'; }
-                else if (action === 'transfer_held') { held++; badgeClass = 'held'; statusText = 'Held'; }
-                else return;
+                else if (action === 'transfer_held') {
+                    if (approvedTimestamps.has(tx.timestamp)) {
+                        allowed++; badgeClass = 'allowed'; statusText = 'Approved'; 
+                    } else {
+                        held++; badgeClass = 'held'; statusText = 'Held'; 
+                    }
+                } else return;
 
                 const to = tx.to || '';
                 const amount = tx.amount_usd || '';
                 const detail = tx.reason || tx.tx_hash || '';
+                const ts = tx.timestamp || 0;
 
-                // Desktop HTML
+                const isPending = (action === 'transfer_held' && !approvedTimestamps.has(tx.timestamp));
+                
+                const approveBtnDesktop = isPending 
+                    ? `<button class="btn-approve" onclick="openModal(${ts})">Approve</button>` 
+                    : '';
+                const approveBtnMobile = isPending 
+                    ? `<button class="btn-approve" onclick="openModal(${ts})" style="width: 100%; margin-top: 0.5rem;">Approve Transaction</button>` 
+                    : '';
+
                 desktopHTML += `
                     <tr>
-                        <td><span class="badge ${badgeClass}"><div class="badge-dot"></div>${statusText}</span></td>
+                        <td><span class="badge ${badgeClass}"><div class="badge-dot"></div>${statusText}</span> ${approveBtnDesktop}</td>
                         <td class="mono" style="color: var(--text-muted);">${to}</td>
                         <td class="mono">$${amount}</td>
                         <td class="mono" style="color: var(--text-muted);">${detail}</td>
                     </tr>
                 `;
 
-                // Mobile HTML
                 mobileHTML += `
                     <div class="feed-item">
                         <div class="feed-item-row">
@@ -262,15 +319,14 @@
                         <div class="feed-item-row" style="margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px solid var(--border);">
                             <span class="feed-detail">${detail}</span>
                         </div>
+                        ${approveBtnMobile}
                     </div>
                 `;
             });
 
-            // Update DOM
             desktopBody.innerHTML = desktopHTML;
             mobileFeed.innerHTML = mobileHTML;
 
-            // Update Stats
             document.getElementById('stat-allowed').innerText = allowed;
             document.getElementById('stat-denied').innerText = denied;
             document.getElementById('stat-held').innerText = held;
@@ -279,7 +335,6 @@
             document.getElementById('m-stat-held').innerText = held;
         }
 
-        // Panggil API setiap kali halaman dimuat
         window.onload = fetchAuditData;
     </script>
 </body>
