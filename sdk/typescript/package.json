@@ -1,0 +1,17 @@
+{
+  "name": "@zerix/sdk",
+  "version": "0.1.0",
+  "description": "TypeScript SDK for Zerix middleware wallet",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": ["ai", "agents", "web3", "wallet"],
+  "author": "elzonic",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}
