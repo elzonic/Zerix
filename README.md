@@ -93,6 +93,22 @@ Open `http://localhost:8000` to view the Landing Page, register an account, and 
 
 
 
+## 🖥️ SaaS Platform (v0.5.0)
+
+Zerix now includes a built-in SaaS Dashboard with authentication.
+
+
+
+```bash
+
+python scripts/run_dashboard.py
+
+```
+
+Open `http://localhost:8000` to view the Landing Page, register an account, and access your protected dashboard with HITL approvals.
+
+
+
 ## 📊 Dashboard
 
 Zerix comes with a built-in, zero-dependency dashboard to monitor your agents. 
