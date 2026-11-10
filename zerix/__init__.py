@@ -10,6 +10,7 @@ from .signers.mock import MockSigner
 from .audit.logger import AuditLogger
 from .providers.base import BaseProvider
 from .providers.mock import MockProvider
+from .providers.rpc import JSONRPCProvider
 from .automation.recurring import RecurringTransfer
 from .templates import load_template
 
@@ -30,6 +31,7 @@ __all__ = [
     "AuditLogger",
     "BaseProvider",
     "MockProvider",
+    "JSONRPCProvider",
     "RecurringTransfer",
     "load_template",
 ]
