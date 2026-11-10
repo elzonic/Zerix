@@ -12,6 +12,7 @@ class SpendingCap:
     per_tx_usd: Decimal
     daily_usd: Decimal | None = None
     weekly_usd: Decimal | None = None
+    require_human_above_usd: Decimal | None = None  # Phase 1.2 HITL
 
 
 @dataclass(frozen=True)
@@ -42,5 +43,4 @@ class TimeWindow:
     def is_allowed(self, current_hour: int) -> bool:
         if self.start_hour <= self.end_hour:
             return self.start_hour <= current_hour <= self.end_hour
-        # Handles overnight windows (e.g., 22:00 to 04:00)
         return current_hour >= self.start_hour or current_hour <= self.end_hour
