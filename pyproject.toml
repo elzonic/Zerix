@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "zerix"
+version = "0.0.1"
+description = "Policy-enforcing middleware wallet for AI agents"
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [{ name = "elzonic" }]
+license = { text = "Apache-2.0" }
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest>=8"]
+
+[project.urls]
+Homepage = "https://github.com/elzonic/Zerix"
+
+[tool.setuptools.packages.find]
+include = ["zerix*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
