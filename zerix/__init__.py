@@ -6,6 +6,7 @@ from .policy.engine import PolicyEngine
 from .policy.rules import Allowlist, SpendingCap
 from .signers.base import BaseSigner
 from .signers.mock import MockSigner
+from .audit.logger import AuditLogger
 
 __version__ = "0.0.1"
 
@@ -19,4 +20,5 @@ __all__ = [
     "PolicyDenied",
     "BaseSigner",
     "MockSigner",
+    "AuditLogger",
 ]

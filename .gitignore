@@ -26,3 +26,4 @@ venv/
 *.pem
 *.key
 !/.well-known/security.txt
+audit.jsonl
