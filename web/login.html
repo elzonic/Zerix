@@ -9,37 +9,23 @@
         body { display: flex; align-items: center; justify-content: center; min-height: 100vh; background: var(--bg); }
         .auth-container { width: 100%; max-width: 420px; padding: 2rem; background: var(--surface); border: 1px solid var(--border); border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .auth-logo { display: flex; justify-content: center; margin-bottom: 1.5rem; }
-        
         .auth-tabs { display: flex; border-bottom: 1px solid var(--border); margin-bottom: 2rem; }
         .tab-btn { flex: 1; background: none; border: none; padding: 1rem; font-size: 0.875rem; font-weight: 600; color: var(--text-muted); cursor: pointer; border-bottom: 2px solid transparent; transition: 0.2s; }
         .tab-btn:hover { color: var(--text-main); }
         .tab-btn.active { color: var(--text-main); border-bottom-color: var(--primary); }
-        
         .form-group { margin-bottom: 1.5rem; display: none; }
         .form-group.active { display: block; }
-        .form-group label { display: block; font-size: 0.75rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        .form-group label { display: block; font-size: 0.75rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.5rem; text-transform: uppercase; }
         .form-group input { width: 100%; padding: 0.75rem 1rem; background: var(--bg); border: 1px solid var(--border-light); border-radius: 8px; color: var(--text-main); font-size: 0.875rem; outline: none; transition: border-color 0.2s; }
         .form-group input:focus { border-color: var(--primary); }
         .btn-full { width: 100%; padding: 0.75rem; font-size: 0.875rem; }
-        
         .alert { display: none; padding: 1rem; border-radius: 8px; font-size: 0.875rem; margin-bottom: 1.5rem; text-align: center; }
         .alert.success { display: block; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); color: var(--success); }
         .alert.error { display: block; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: var(--danger); }
         .back-link { display: block; text-align: center; margin-top: 1.5rem; font-size: 0.875rem; color: var(--text-muted); }
-        .back-link:hover { color: var(--text-main); }
-
-        /* API Key Display Box */
         #api-key-result { display: none; text-align: center; }
-        .api-key-box { 
-            background: #000; border: 1px solid var(--primary); border-radius: 8px; 
-            padding: 1rem; font-family: 'JetBrains Mono', monospace; font-size: 1rem; 
-            color: var(--primary); margin-bottom: 1rem; word-break: break-all; 
-        }
-        .btn-copy { 
-            background: var(--surface-hover); border: 1px solid var(--border-light); color: white; 
-            padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; margin-bottom: 1rem; font-size: 0.75rem; 
-            transition: 0.2s; width: 100%;
-        }
+        .api-key-box { background: #000; border: 1px solid var(--primary); border-radius: 8px; padding: 1rem; font-family: 'JetBrains Mono', monospace; font-size: 1rem; color: var(--primary); margin-bottom: 1rem; word-break: break-all; }
+        .btn-copy { background: var(--surface-hover); border: 1px solid var(--border-light); color: white; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; margin-bottom: 1rem; font-size: 0.75rem; transition: 0.2s; width: 100%; }
         .btn-copy:hover { background: var(--border); }
     </style>
 </head>
@@ -50,7 +36,6 @@
             <a href="index.html" class="logo" style="font-size: 1.5rem;"><div class="logo-icon"></div> Zerix</a>
         </div>
         
-        <!-- AUTH TABS -->
         <div class="auth-tabs" id="auth-tabs">
             <button class="tab-btn active" onclick="switchTab('signup')" id="tab-signup">Create Account</button>
             <button class="tab-btn" onclick="switchTab('login')" id="tab-login">Sign In</button>
@@ -58,7 +43,6 @@
 
         <div id="alert-box" class="alert"></div>
 
-        <!-- SIGN UP FORM -->
         <form id="signup-form" class="form-group active">
             <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1rem; text-align: center;">Enter your email to generate a new API key.</p>
             <div style="margin-bottom: 1.5rem;">
@@ -68,7 +52,6 @@
             <button type="submit" class="btn btn-primary btn-full" id="signup-btn">Generate API Key</button>
         </form>
 
-        <!-- SIGN IN FORM -->
         <form id="login-form" class="form-group">
             <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1rem; text-align: center;">Paste your existing Zerix API Key to access your dashboard.</p>
             <div style="margin-bottom: 1.5rem;">
@@ -78,22 +61,22 @@
             <button type="submit" class="btn btn-primary btn-full" id="login-btn">Sign In</button>
         </form>
 
-        <!-- API KEY RESULT (Muncul setelah daftar) -->
         <div id="api-key-result">
             <h3 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 0.5rem;">Account Created!</h3>
-            <p style="font-size: 0.875rem; color: var(--text-muted); margin-bottom: 1rem;">Please save this API Key securely. You will need it to sign in.</p>
+            <p style="font-size: 0.875rem; color: var(--text-muted); margin-bottom: 1rem;">Please save this API Key securely.</p>
             <div class="api-key-box" id="generated-key">zx_...</div>
             <button class="btn-copy" id="copy-btn" onclick="copyKey()">Copy to Clipboard</button>
-            <button class="btn btn-primary btn-full" onclick="goToDashboard()">Continue to Dashboard</button>
+            <button class="btn btn-primary btn-full" onclick="window.location.href='dashboard.html'">Continue to Dashboard</button>
         </div>
 
         <a href="index.html" class="back-link" id="back-link">← Back to Home</a>
     </div>
 
     <script>
-        if (localStorage.getItem('zerix_api_key')) {
-            window.location.href = 'dashboard.html';
-        }
+        // Cek jika sudah punya Cookie Session (dengan mencoba akses API)
+        fetch('/api/me', { credentials: 'same-origin' })
+            .then(res => { if(res.ok) window.location.href = 'dashboard.html'; })
+            .catch(() => {});
 
         let newlyGeneratedKey = "";
         const alertBox = document.getElementById('alert-box');
@@ -104,7 +87,6 @@
             document.getElementById('signup-form').classList.remove('active');
             document.getElementById('login-form').classList.remove('active');
             alertBox.className = "alert";
-
             if (mode === 'signup') {
                 document.getElementById('tab-signup').classList.add('active');
                 document.getElementById('signup-form').classList.add('active');
@@ -114,24 +96,21 @@
             }
         }
 
-        // Handle Sign Up
         document.getElementById('signup-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = document.getElementById('email').value;
             const btn = document.getElementById('signup-btn');
-            btn.innerText = "Generating..."; btn.disabled = true; alertBox.className = "alert";
+            btn.innerText = "Generating..."; btn.disabled = true;
 
             try {
                 const res = await fetch('/api/register', {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email: email })
+                    body: JSON.stringify({ email: email }),
+                    credentials: 'same-origin'
                 });
                 const data = await res.json();
-
                 if (res.ok) {
                     newlyGeneratedKey = data.api_key;
-                    localStorage.setItem('zerix_email', email);
-                    
                     document.getElementById('auth-tabs').style.display = 'none';
                     document.getElementById('signup-form').style.display = 'none';
                     document.getElementById('back-link').style.display = 'none';
@@ -141,9 +120,33 @@
                     throw new Error(data.error || "Registration failed");
                 }
             } catch (err) {
-                alertBox.className = "alert error";
-                alertBox.innerText = err.message;
+                alertBox.className = "alert error"; alertBox.innerText = err.message;
                 btn.innerText = "Generate API Key"; btn.disabled = false;
+            }
+        });
+
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const apiKey = document.getElementById('api-key').value.trim();
+            const btn = document.getElementById('login-btn');
+            btn.innerText = "Verifying..."; btn.disabled = true;
+
+            try {
+                const res = await fetch('/api/login', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ api_key: apiKey }),
+                    credentials: 'same-origin'
+                });
+                
+                if (res.ok) {
+                    alertBox.className = "alert success"; alertBox.innerText = "Key validated! Redirecting...";
+                    setTimeout(() => window.location.href = 'dashboard.html', 1000);
+                } else {
+                    throw new Error("Invalid API Key.");
+                }
+            } catch (err) {
+                alertBox.className = "alert error"; alertBox.innerText = err.message;
+                btn.innerText = "Sign In"; btn.disabled = false;
             }
         });
 
@@ -151,48 +154,9 @@
             navigator.clipboard.writeText(newlyGeneratedKey).then(() => {
                 const btn = document.getElementById('copy-btn');
                 btn.innerText = "Copied!";
-                btn.style.background = "rgba(16, 185, 129, 0.1)";
-                btn.style.color = "var(--success)";
-                btn.style.borderColor = "var(--success)";
-                
-                setTimeout(() => {
-                    btn.innerText = "Copy to Clipboard";
-                    btn.style.background = "var(--surface-hover)";
-                    btn.style.color = "white";
-                    btn.style.borderColor = "var(--border-light)";
-                }, 2000);
+                setTimeout(() => { btn.innerText = "Copy to Clipboard"; }, 2000);
             });
         }
-
-        function goToDashboard() {
-            localStorage.setItem('zerix_api_key', newlyGeneratedKey);
-            window.location.href = 'dashboard.html';
-        }
-
-        // Handle Sign In
-        document.getElementById('login-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const apiKey = document.getElementById('api-key').value.trim();
-            const btn = document.getElementById('login-btn');
-            btn.innerText = "Verifying..."; btn.disabled = true; alertBox.className = "alert";
-
-            try {
-                const res = await fetch('/api/audit', { headers: { 'X-API-Key': apiKey } });
-                if (res.ok) {
-                    alertBox.className = "alert success";
-                    alertBox.innerText = "Key validated! Redirecting...";
-                    localStorage.setItem('zerix_api_key', apiKey);
-                    localStorage.setItem('zerix_email', "Authenticated User");
-                    setTimeout(() => window.location.href = 'dashboard.html', 1000);
-                } else {
-                    throw new Error("Invalid API Key. Please try again.");
-                }
-            } catch (err) {
-                alertBox.className = "alert error";
-                alertBox.innerText = err.message;
-                btn.innerText = "Sign In"; btn.disabled = false;
-            }
-        });
     </script>
 </body>
 </html>
