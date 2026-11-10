@@ -54,7 +54,7 @@ This document describes Zerix's development phases from concept to production.
 
 ### Deliverables
 - [ ] **3.1** SLA & uptime guarantee
-- [ ] **3.2** Team & role management (Multi-tenant)
+- [x] **3.2** Team & role management (SaaS Auth & API Keys)
 - [x] **3.3** Advanced compliance (CSV Audit Export)
 - [x] **3.4** Policy templates (Trading Bot, API Micropayments)
 - [ ] **3.5** Plugin system
