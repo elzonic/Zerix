@@ -6,7 +6,10 @@
     <title>Zerix Dashboard</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        .app-layout { display: flex; height: 100vh; overflow: hidden; background: var(--bg); }
+        /* Sembunyikan seluruh layout sampai JS siap */
+        .app-layout { display: flex; height: 100vh; overflow: hidden; background: var(--bg); opacity: 0; transition: opacity 0.4s ease-out; }
+        .app-layout.loaded { opacity: 1; }
+
         .sidebar { width: 260px; border-right: 1px solid var(--border); background: var(--surface); display: flex; flex-direction: column; z-index: 50; transition: transform 0.4s; }
         .sidebar-header { height: 64px; display: flex; align-items: center; padding: 0 1.5rem; border-bottom: 1px solid var(--border); }
         .sidebar-content { padding: 1.5rem 1rem; flex: 1; display: flex; flex-direction: column; gap: 1.5rem; overflow-y: auto; }
@@ -35,8 +38,12 @@
         .topbar h1 { font-size: 1.25rem; font-weight: 600; }
         .topbar p { font-size: 0.8rem; color: var(--text-muted); }
         
-        .content { padding: 2rem; max-width: 1200px; margin: 0 auto; width: 100%; display: none; }
-        .content.active { display: block; }
+        .content { 
+            padding: 2rem; max-width: 1200px; margin: 0 auto; width: 100%; display: none; 
+            opacity: 0; transform: translateY(15px);
+            transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .content.active { display: block; opacity: 1; transform: translateY(0); }
         
         .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 2rem; }
         .stat-box { background: var(--surface); border: 1px solid var(--border); border-radius: 32px; padding: 1.5rem; }
@@ -78,15 +85,14 @@
         .btn-modal-confirm { background: var(--primary); border: none; color: white; padding: 0.4rem 1rem; border-radius: 6px; cursor: pointer; font-size: 0.875rem; font-weight: 600; }
         .api-key-display { background: #000; border: 1px solid var(--primary); border-radius: 8px; padding: 1rem; font-family: 'JetBrains Mono', monospace; font-size: 0.875rem; color: var(--primary); margin-bottom: 1rem; word-break: break-all; text-align: center; }
 
-        /* Custom Toast Notification */
         .toast { 
             position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(100px); 
-            background: var(--surface-hover); color: var(--text-main); padding: 1rem 1.5rem; 
+            background: var(--surface-hover); color: var(--text-main); padding: 0.75rem 1.25rem; 
             border-radius: 999px; border: 1px solid var(--border-light); 
             opacity: 0; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); 
             z-index: 9999; box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
-            display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; font-weight: 500;
-            pointer-events: none;
+            display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem; font-weight: 500;
+            pointer-events: none; width: max-content; max-width: 90vw;
         }
         .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 
@@ -130,16 +136,17 @@
 </head>
 <body>
 
-    <!-- CUSTOM TOAST -->
     <div class="toast" id="toast-notification">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
         <span id="toast-message">Copied!</span>
     </div>
 
     <div class="modal-overlay" id="logout-modal">
         <div class="modal-box">
             <h3 class="modal-title">Sign Out</h3>
-            <p class="modal-desc">Are you sure you want to sign out?</p>
+            <p class="modal-desc" style="color: var(--warning); margin-bottom: 1rem;">
+                <strong>Warning:</strong> If you haven't saved your API Key, you will be permanently locked out of this account.
+            </p>
             <div class="modal-actions">
                 <button class="btn-modal-cancel" onclick="document.getElementById('logout-modal').classList.remove('show')">Cancel</button>
                 <button class="btn-modal-confirm" onclick="confirmLogout()" style="background: var(--danger);">Yes, Sign Out</button>
@@ -169,7 +176,8 @@
         </div>
     </div>
 
-    <div class="app-layout">
+    <!-- APP LAYOUT (AWALNYA INVISIBLE, AKAN DIMUNCULKAN OLEH JS) -->
+    <div class="app-layout" id="app-layout">
         <div class="sidebar-overlay" id="overlay"></div>
 
         <aside class="sidebar" id="sidebar">
@@ -188,13 +196,13 @@
 
                 <div class="nav-group">
                     <span>Dashboard</span>
-                    <a href="#" class="nav-link active" id="nav-overview" onclick="switchView('overview')">
+                    <a href="#" class="nav-link" id="nav-overview" onclick="switchView('overview'); return false;">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
                         <div class="nav-link-content"><span class="nav-link-title">Overview</span><span class="nav-link-desc">Live transaction monitoring</span></div>
                     </a>
-                    <a href="#" class="nav-link">
+                    <a href="policies.html" class="nav-link">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-                        <div class="nav-link-content"><span class="nav-link-title">Policies <span class="soon-badge">Soon</span></span><span class="nav-link-desc">Configure spending rules & limits</span></div>
+                        <div class="nav-link-content"><span class="nav-link-title">Policies</span><span class="nav-link-desc">Configure spending rules & limits</span></div>
                     </a>
                     <a href="#" class="nav-link">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
@@ -204,7 +212,7 @@
 
                 <div class="nav-group">
                     <span>Settings</span>
-                    <a href="#" class="nav-link" id="nav-keys" onclick="switchView('keys')">
+                    <a href="#" class="nav-link" id="nav-keys" onclick="switchView('keys'); return false;">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"></path></svg>
                         <div class="nav-link-content"><span class="nav-link-title">API Keys</span><span class="nav-link-desc">Manage your access tokens</span></div>
                     </a>
@@ -215,8 +223,8 @@
         <main class="main-wrap">
             <div class="topbar">
                 <div class="topbar-left">
-                    <h1 id="desktop-title">Overview</h1>
-                    <p id="desktop-desc">Monitor your AI agent's transactions, policy checks, and approval status in real-time.</p>
+                    <h1 id="desktop-title"></h1>
+                    <p id="desktop-desc"></p>
                 </div>
                 <div class="desktop-profile">
                     <span class="user-email" style="font-size: 0.875rem; color: var(--text-muted);" id="topbar-user-email">loading...</span>
@@ -229,11 +237,11 @@
             </div>
 
             <div class="mobile-page-title">
-                <h1 id="mobile-title">Overview</h1>
-                <p id="mobile-desc">Monitor your AI agent's transactions.</p>
+                <h1 id="mobile-title"></h1>
+                <p id="mobile-desc"></p>
             </div>
 
-            <div class="content active" id="view-overview">
+            <div class="content" id="view-overview">
                 <div class="stats-row">
                     <div class="stat-box"><span class="label">Allowed Txns</span><div class="number" id="stat-allowed">0</div></div>
                     <div class="stat-box"><span class="label">Denied Txns</span><div class="number" id="stat-denied">0</div></div>
@@ -247,7 +255,7 @@
                 <div class="desktop-table">
                     <table>
                         <thead><tr><th style="width: 20%;">Status</th><th style="width: 25%;">Recipient</th><th style="width: 20%;">Amount</th><th style="width: 35%;">Reason / TxHash</th></tr></thead>
-                        <tbody id="desktop-table-body"><tr><td colspan="4" style="text-align: center; color: var(--text-muted);">Loading data...</td></tr></tbody>
+                        <tbody id="desktop-table-body"></tbody>
                     </table>
                 </div>
                 <div class="mobile-feed" id="mobile-feed-body"></div>
@@ -261,9 +269,7 @@
                 <div class="keys-table">
                     <table>
                         <thead><tr><th>API Key</th><th>Created At</th><th style="text-align: right;">Actions</th></tr></thead>
-                        <tbody id="keys-table-body">
-                            <tr><td colspan="3" style="text-align: center; color: var(--text-muted);">Loading keys...</td></tr>
-                        </tbody>
+                        <tbody id="keys-table-body"></tbody>
                     </table>
                 </div>
             </div>
@@ -271,6 +277,39 @@
     </div>
 
     <script>
+        // 1. TERAPKAN STATE AWAL SECARA SINKRONUS (ANTI GLITCH)
+        const savedTab = localStorage.getItem('zerix_active_tab') || 'overview';
+        
+        // Sembunyikan semua konten, lalu munculkan yang sesuai
+        document.querySelectorAll('.content').forEach(el => el.classList.remove('active'));
+        document.getElementById(`view-${savedTab}`).classList.add('active');
+        
+        // Set class active di sidebar
+        document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
+        document.getElementById(`nav-${savedTab}`).classList.add('active');
+
+        // Set Judul Topbar & Mobile Title
+        if (savedTab === 'overview') {
+            document.getElementById('desktop-title').innerText = "Overview";
+            document.getElementById('desktop-desc').innerText = "Monitor your AI agent's transactions, policy checks, and approval status in real-time.";
+            document.getElementById('mobile-title').innerText = "Overview";
+            document.getElementById('mobile-desc').innerText = "Monitor your AI agent's transactions.";
+            fetchAuditData(); // Ambil data langsung
+        } else {
+            document.getElementById('desktop-title').innerText = "API Keys";
+            document.getElementById('desktop-desc').innerText = "Manage your access tokens. Do not share these keys.";
+            document.getElementById('mobile-title').innerText = "API Keys";
+            document.getElementById('mobile-desc').innerText = "Manage your access tokens.";
+            fetchApiKeys(); // Ambil data langsung
+        }
+
+        // Munculkan seluruh aplikasi dengan mulus
+        setTimeout(() => {
+            document.getElementById('app-layout').classList.add('loaded');
+        }, 50);
+
+
+        // 2. AUTH CHECK (Berjalan di background)
         fetch('/api/me', { credentials: 'same-origin' })
             .then(res => {
                 if (!res.ok) throw new Error("Unauthorized");
@@ -280,24 +319,25 @@
                 document.getElementById('topbar-user-email').innerText = user.email;
                 document.getElementById('sidebar-user-email').innerText = user.email;
                 document.getElementById('user-avatar').innerText = user.email.charAt(0).toUpperCase();
-                initApp();
+                
+                // Inisialisasi event listener hamburger
+                const btn = document.getElementById('hamburger-btn');
+                const sidebar = document.getElementById('sidebar');
+                const overlay = document.getElementById('overlay');
+                function toggleMenu() { btn.classList.toggle('active'); sidebar.classList.toggle('open'); overlay.classList.toggle('show'); }
+                if(btn && sidebar && overlay) { btn.addEventListener('click', toggleMenu); overlay.addEventListener('click', toggleMenu); }
             })
             .catch(err => { window.location.href = 'login.html'; });
 
-        function initApp() {
-            const btn = document.getElementById('hamburger-btn');
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('overlay');
-            function toggleMenu() { btn.classList.toggle('active'); sidebar.classList.toggle('open'); overlay.classList.toggle('show'); }
-            if(btn && sidebar && overlay) { btn.addEventListener('click', toggleMenu); overlay.addEventListener('click', toggleMenu); }
-            fetchAuditData();
-        }
 
+        // 3. VIEW SWITCHING (Untuk navigasi user)
         function switchView(viewName) {
             document.querySelectorAll('.content').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
             document.getElementById(`view-${viewName}`).classList.add('active');
             document.getElementById(`nav-${viewName}`).classList.add('active');
+
+            localStorage.setItem('zerix_active_tab', viewName);
 
             if (viewName === 'overview') {
                 document.getElementById('desktop-title').innerText = "Overview";
@@ -321,13 +361,13 @@
             if (btn) btn.classList.remove('active');
         }
 
+        // 4. LOGOUT & TOAST
         function logout() { document.getElementById('logout-modal').classList.add('show'); }
         function confirmLogout() { 
+            localStorage.removeItem('zerix_active_tab');
             fetch('/api/logout', { method: 'POST', credentials: 'same-origin' })
                 .then(() => window.location.href = 'login.html');
         }
-
-        // --- CUSTOM TOAST FUNCTION ---
         function showToast(message) {
             const toast = document.getElementById('toast-notification');
             document.getElementById('toast-message').innerText = message;
@@ -335,6 +375,7 @@
             setTimeout(() => toast.classList.remove('show'), 2500);
         }
 
+        // 5. API KEYS LOGIC
         let keyToDelete = null;
         function promptDeleteKey(key) {
             keyToDelete = key;
@@ -400,9 +441,7 @@
         }
 
         function copyExistingKey(key) {
-            navigator.clipboard.writeText(key).then(() => {
-                showToast("API Key copied to clipboard!");
-            });
+            navigator.clipboard.writeText(key).then(() => { showToast("API Key copied to clipboard!"); });
         }
 
         async function generateNewKey() {
@@ -432,6 +471,7 @@
             });
         }
 
+        // 6. OVERVIEW LOGIC
         async function fetchAuditData() {
             try {
                 const response = await fetch('/api/audit', { credentials: 'same-origin' });
