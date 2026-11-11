@@ -115,6 +115,14 @@
     </div>
 
     <script>
+        // Ambil data policy saat ini
+        fetch("/api/policies", { credentials: "same-origin" })
+            .then(res => res.json())
+            .then(data => {
+                if(data.per_tx_usd) document.getElementById("per-tx").value = data.per_tx_usd;
+                if(data.hitl_usd) document.getElementById("hitl").value = data.hitl_usd;
+            });
+
         const btn = document.getElementById('hamburger-btn');
         const sidebar = document.getElementById('sidebar');
         const overlay = document.getElementById('overlay');

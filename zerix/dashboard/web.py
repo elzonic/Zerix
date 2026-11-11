@@ -10,7 +10,7 @@ from pathlib import Path
 from zerix.database import (
     init_db, create_user, get_user_by_api_key, 
     create_api_key, get_api_keys, delete_api_key,
-    create_session, get_user_by_session, delete_session
+    create_session, get_user_by_session, delete_session, save_policy, get_policy
 )
 
 class DashboardHandler(BaseHTTPRequestHandler):
@@ -152,6 +152,16 @@ class DashboardHandler(BaseHTTPRequestHandler):
             self.send_header('Content-type', 'application/json')
             self.end_headers()
             self.wfile.write(json.dumps({"api_key": new_key}).encode('utf-8'))
+            return
+
+        if self.path == '/api/policies':
+            user = self._get_user()
+            if not user: self.send_response(401); self.end_headers(); return
+            content_length = int(self.headers['Content-Length'])
+            data = json.loads(self.rfile.read(content_length).decode('utf-8'))
+            save_policy(user['email'], data.get('per_tx_usd'), data.get('hitl_usd'))
+            self.send_response(200); self.end_headers()
+            self.wfile.write(json.dumps({'status': 'saved'}).encode('utf-8'))
             return
 
         if self.path == '/api/approve':
