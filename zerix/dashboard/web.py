@@ -6,11 +6,13 @@ import time
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from http.cookies import SimpleCookie
 from pathlib import Path
+from urllib.parse import urlparse
 
 from zerix.database import (
     init_db, create_user, get_user_by_api_key, 
     create_api_key, get_api_keys, delete_api_key,
-    create_session, get_user_by_session, delete_session, save_policy, get_policy
+    create_session, get_user_by_session, delete_session,
+    save_policy, get_policy
 )
 
 class DashboardHandler(BaseHTTPRequestHandler):
@@ -36,7 +38,9 @@ class DashboardHandler(BaseHTTPRequestHandler):
         self.send_header('Set-Cookie', f'zerix_session={token}; HttpOnly; SameSite=Strict; Path=/; Max-Age=604800')
 
     def do_GET(self):
-        if self.path == '/api/me':
+        parsed_path = urlparse(self.path).path
+        
+        if parsed_path == '/api/me':
             user = self._get_user()
             if user:
                 self.send_response(200)
@@ -47,11 +51,10 @@ class DashboardHandler(BaseHTTPRequestHandler):
                 self.send_response(401); self.end_headers()
             return
 
-        if self.path == '/api/audit':
+        if parsed_path == '/api/audit':
             user = self._get_user()
             if not user:
                 self.send_response(401); self.end_headers(); return
-
             self.send_response(200)
             self.send_header('Content-type', 'application/json')
             self.end_headers()
@@ -65,7 +68,7 @@ class DashboardHandler(BaseHTTPRequestHandler):
             self.wfile.write(json.dumps(data[-50:]).encode('utf-8'))
             return
 
-        if self.path == '/api/keys':
+        if parsed_path == '/api/keys':
             user = self._get_user()
             if not user:
                 self.send_response(401); self.end_headers(); return
@@ -76,13 +79,30 @@ class DashboardHandler(BaseHTTPRequestHandler):
             self.wfile.write(json.dumps(keys).encode('utf-8'))
             return
 
-        if self.path == '/' or self.path == '/index.html':
+        if parsed_path == '/api/policies':
+            user = self._get_user()
+            if not user: 
+                self.send_response(401); self.end_headers(); return
+            policy = get_policy(user['email'])
+            self.send_response(200)
+            self.send_header('Content-type', 'application/json')
+            self.send_header('Cache-Control', 'no-store, no-cache, must-revalidate') # Anti Cache
+            self.end_headers()
+            if policy:
+                self.wfile.write(json.dumps(policy).encode('utf-8'))
+            else:
+                self.wfile.write(json.dumps({'per_tx_usd': None, 'hitl_usd': None}).encode('utf-8'))
+            return
+
+        if parsed_path == '/' or parsed_path == '/index.html':
             filepath = 'web/index.html'; content_type = 'text/html'
-        elif self.path == '/login.html':
+        elif parsed_path == '/login.html':
             filepath = 'web/login.html'; content_type = 'text/html'
-        elif self.path == '/dashboard.html':
+        elif parsed_path == '/dashboard.html':
             filepath = 'web/dashboard.html'; content_type = 'text/html'
-        elif self.path == '/style.css':
+        elif parsed_path == '/policies.html':
+            filepath = 'web/policies.html'; content_type = 'text/html'
+        elif parsed_path == '/style.css':
             filepath = 'web/style.css'; content_type = 'text/css'
         else:
             self.send_response(404); self.end_headers(); return
@@ -91,13 +111,17 @@ class DashboardHandler(BaseHTTPRequestHandler):
             with open(filepath, 'rb') as f: content = f.read()
             self.send_response(200)
             self.send_header('Content-type', content_type)
+            if content_type == 'text/html':
+                self.send_header('Cache-Control', 'no-store, no-cache, must-revalidate') # Anti Cache HTML
             self.end_headers()
             self.wfile.write(content)
         except FileNotFoundError:
             self.send_response(404); self.end_headers()
 
     def do_POST(self):
-        if self.path == '/api/register':
+        parsed_path = urlparse(self.path).path
+        
+        if parsed_path == '/api/register':
             content_length = int(self.headers['Content-Length'])
             data = json.loads(self.rfile.read(content_length).decode('utf-8'))
             email = data.get('email')
@@ -105,7 +129,6 @@ class DashboardHandler(BaseHTTPRequestHandler):
             if create_user(email):
                 api_key = create_api_key(email)
                 session_token = create_session(email)
-                
                 self.send_response(201)
                 self.send_header('Content-type', 'application/json')
                 self._set_cookie(session_token)
@@ -116,7 +139,7 @@ class DashboardHandler(BaseHTTPRequestHandler):
                 self.wfile.write(json.dumps({"error": "Email already registered"}).encode('utf-8'))
             return
 
-        if self.path == '/api/login':
+        if parsed_path == '/api/login':
             content_length = int(self.headers['Content-Length'])
             data = json.loads(self.rfile.read(content_length).decode('utf-8'))
             api_key = data.get('api_key')
@@ -134,7 +157,7 @@ class DashboardHandler(BaseHTTPRequestHandler):
                 self.wfile.write(json.dumps({"error": "Invalid API Key"}).encode('utf-8'))
             return
             
-        if self.path == '/api/logout':
+        if parsed_path == '/api/logout':
             token = self._get_session_token()
             if token: delete_session(token)
             self.send_response(200)
@@ -144,7 +167,7 @@ class DashboardHandler(BaseHTTPRequestHandler):
             self.wfile.write(json.dumps({"status": "logged_out"}).encode('utf-8'))
             return
 
-        if self.path == '/api/keys':
+        if parsed_path == '/api/keys':
             user = self._get_user()
             if not user: self.send_response(401); self.end_headers(); return
             new_key = create_api_key(user["email"])
@@ -153,8 +176,8 @@ class DashboardHandler(BaseHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(json.dumps({"api_key": new_key}).encode('utf-8'))
             return
-
-        if self.path == '/api/policies':
+            
+        if parsed_path == '/api/policies':
             user = self._get_user()
             if not user: self.send_response(401); self.end_headers(); return
             content_length = int(self.headers['Content-Length'])
@@ -164,14 +187,12 @@ class DashboardHandler(BaseHTTPRequestHandler):
             self.wfile.write(json.dumps({'status': 'saved'}).encode('utf-8'))
             return
 
-        if self.path == '/api/approve':
+        if parsed_path == '/api/approve':
             user = self._get_user()
             if not user: self.send_response(401); self.end_headers(); return
-            
             content_length = int(self.headers['Content-Length'])
             data = json.loads(self.rfile.read(content_length).decode('utf-8'))
             original_ts = data.get('timestamp')
-            
             if original_ts:
                 approval_log = {
                     "timestamp": time.time(), "action": "transfer_allowed",
@@ -188,18 +209,17 @@ class DashboardHandler(BaseHTTPRequestHandler):
         self.send_response(404); self.end_headers()
 
     def do_DELETE(self):
-        if self.path == '/api/keys':
+        parsed_path = urlparse(self.path).path
+        
+        if parsed_path == '/api/keys':
             user = self._get_user()
             if not user: self.send_response(401); self.end_headers(); return
-                
             content_length = int(self.headers['Content-Length'])
             data = json.loads(self.rfile.read(content_length).decode('utf-8'))
-            
             if delete_api_key(user["email"], data.get('api_key')):
                 self.send_response(200); self.end_headers()
                 self.wfile.write(json.dumps({"status": "deleted"}).encode('utf-8'))
             else:
-                # Jika gagal (karena key terakhir), kirim 400 Bad Request dengan JSON error
                 self.send_response(400); self.end_headers()
                 self.wfile.write(json.dumps({"error": "Cannot delete the last API key."}).encode('utf-8'))
             return
