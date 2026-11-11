@@ -36,6 +36,17 @@ def init_db():
             FOREIGN KEY(email) REFERENCES users(email) ON DELETE CASCADE
         )
     """)
+    # Tabel Policies (Baru)
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS policies (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            email TEXT UNIQUE NOT NULL,
+            per_tx_usd REAL NOT NULL,
+            hitl_usd REAL,
+            updated_at REAL NOT NULL,
+            FOREIGN KEY(email) REFERENCES users(email) ON DELETE CASCADE
+        )
+    """)
     conn.commit()
     conn.close()
 
@@ -81,18 +92,13 @@ def get_api_keys(email: str) -> list:
     return [{"api_key": r[0], "created_at": r[1]} for r in rows]
 
 def delete_api_key(email: str, api_key: str) -> bool:
-    """Menghapus API Key, tapi menolak jika itu adalah key terakhir."""
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
-    
-    # Cek jumlah key yang dimiliki user
     cursor.execute("SELECT COUNT(*) FROM api_keys WHERE email = ?", (email,))
     count = cursor.fetchone()[0]
-    
     if count <= 1:
         conn.close()
-        return False # Tolak hapus jika hanya sisa 1 key
-        
+        return False
     cursor.execute("DELETE FROM api_keys WHERE email = ? AND api_key = ?", (email, api_key))
     changed = cursor.rowcount > 0
     conn.commit()
@@ -130,3 +136,28 @@ def delete_session(token: str):
     cursor.execute("DELETE FROM sessions WHERE token = ?", (token,))
     conn.commit()
     conn.close()
+
+# --- POLICY MANAGEMENT (BARU) ---
+def save_policy(email: str, per_tx_usd: float, hitl_usd: float | None):
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute("""
+        INSERT INTO policies (email, per_tx_usd, hitl_usd, updated_at)
+        VALUES (?, ?, ?, ?)
+        ON CONFLICT(email) DO UPDATE SET
+            per_tx_usd=excluded.per_tx_usd,
+            hitl_usd=excluded.hitl_usd,
+            updated_at=excluded.updated_at
+    """, (email, per_tx_usd, hitl_usd, time.time()))
+    conn.commit()
+    conn.close()
+
+def get_policy(email: str) -> dict | None:
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute("SELECT per_tx_usd, hitl_usd FROM policies WHERE email = ?", (email,))
+    row = cursor.fetchone()
+    conn.close()
+    if row:
+        return {"per_tx_usd": row[0], "hitl_usd": row[1]}
+    return None
