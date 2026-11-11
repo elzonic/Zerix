@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Zerix — Policies</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .app-layout { display: flex; height: 100vh; overflow: hidden; background: var(--bg); }
+        .sidebar { width: 260px; border-right: 1px solid var(--border); background: var(--surface); display: flex; flex-direction: column; z-index: 50; transition: transform 0.4s; }
+        .sidebar-header { height: 64px; display: flex; align-items: center; padding: 0 1.5rem; border-bottom: 1px solid var(--border); }
+        .sidebar-content { padding: 1.5rem 1rem; flex: 1; display: flex; flex-direction: column; gap: 1.5rem; }
+        .nav-group { display: flex; flex-direction: column; gap: 0.25rem; }
+        .nav-group > span { font-size: 0.7rem; color: var(--text-muted); font-weight: 600; padding: 0 0.75rem; margin-bottom: 0.5rem; text-transform: uppercase; }
+        .nav-link { display: flex; align-items: flex-start; gap: 0.75rem; padding: 0.75rem; border-radius: 12px; color: var(--text-muted); transition: 0.2s; cursor: pointer; text-decoration: none; }
+        .nav-link svg { margin-top: 2px; }
+        .nav-link-content { display: flex; flex-direction: column; }
+        .nav-link-title { font-size: 0.875rem; font-weight: 500; color: var(--text-main); display: flex; align-items: center; }
+        .nav-link-desc { font-size: 0.7rem; color: var(--text-muted); margin-top: 2px; line-height: 1.2; }
+        .nav-link:hover { background: var(--surface-hover); }
+        .nav-link.active { background: var(--surface-hover); }
+        
+        .main-wrap { flex: 1; display: flex; flex-direction: column; overflow-y: auto; width: 100%; }
+        .topbar { height: 80px; display: flex; justify-content: space-between; align-items: center; padding: 0 2rem; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(12px); z-index: 10; }
+        .topbar h1 { font-size: 1.25rem; font-weight: 600; }
+        .topbar p { font-size: 0.8rem; color: var(--text-muted); }
+        
+        .content { padding: 2rem; max-width: 1200px; margin: 0 auto; width: 100%; }
+        
+        .policy-card { background: var(--surface); border: 1px solid var(--border); border-radius: 24px; padding: 2rem; max-width: 600px; margin: 0 auto; }
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group label { display: block; font-size: 0.75rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.5rem; text-transform: uppercase; }
+        .form-group input { width: 100%; padding: 0.75rem 1rem; background: var(--bg); border: 1px solid var(--border-light); border-radius: 8px; color: var(--text-main); font-size: 0.875rem; outline: none; transition: 0.2s; }
+        .form-group input:focus { border-color: var(--primary); }
+        .form-group p { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.5rem; }
+        
+        .mobile-header { display: none; }
+        .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); z-index: 40; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+        .hamburger { display: none; cursor: pointer; background: none; border: none; flex-direction: column; gap: 5px; padding: 0.5rem; z-index: 1001; }
+        .hamburger span { display: block; width: 24px; height: 2px; background: var(--text-main); transition: 0.3s; }
+        
+        @media (max-width: 768px) {
+            .sidebar { position: fixed; top: 0; left: 0; height: 100vh; transform: translateX(-100%); width: 280px; }
+            .sidebar.open { transform: translateX(0); }
+            .sidebar-overlay.show { display: block; opacity: 1; pointer-events: auto; }
+            .topbar { display: none; }
+            .mobile-header { display: flex; justify-content: space-between; align-items: center; height: 64px; padding: 0 1.25rem; border-bottom: 1px solid var(--border); background: rgba(0,0,0,0.9); position: sticky; top: 0; z-index: 30; }
+            .hamburger { display: flex; }
+            .content { padding: 1.25rem; }
+            .policy-card { padding: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-layout">
+        <div class="sidebar-overlay" id="overlay"></div>
+
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header"><div class="logo"><div class="logo-icon"></div> Zerix App</div></div>
+            <div class="sidebar-content">
+                <div class="nav-group">
+                    <span>Dashboard</span>
+                    <a href="dashboard.html" class="nav-link">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                        <div class="nav-link-content"><span class="nav-link-title">Overview</span><span class="nav-link-desc">Live transaction monitoring</span></div>
+                    </a>
+                    <a href="policies.html" class="nav-link active">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                        <div class="nav-link-content"><span class="nav-link-title">Policies</span><span class="nav-link-desc">Configure spending rules & limits</span></div>
+                    </a>
+                    <a href="#" class="nav-link">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                        <div class="nav-link-content"><span class="nav-link-title">Approvals <span class="soon-badge">Soon</span></span><span class="nav-link-desc">Manage held transactions (HITL)</span></div>
+                    </a>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-wrap">
+            <div class="topbar">
+                <div class="topbar-left">
+                    <h1>Policies</h1>
+                    <p>Configure security rules for your AI agents.</p>
+                </div>
+            </div>
+
+            <div class="mobile-header">
+                <a href="index.html" class="logo"><div class="logo-icon"></div> Zerix</a>
+                <button class="hamburger" id="hamburger-btn"><span></span><span></span><span></span></button>
+            </div>
+
+            <div class="content">
+                <div class="policy-card">
+                    <h2 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1.5rem;">Create New Policy</h2>
+                    
+                    <form id="policy-form">
+                        <div class="form-group">
+                            <label>Per-Transaction Cap (USD)</label>
+                            <input type="number" step="0.01" id="per-tx" placeholder="e.g. 10.00" required>
+                            <p>Maximum amount an agent can spend in a single transaction.</p>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>HITL Threshold (USD)</label>
+                            <input type="number" step="0.01" id="hitl" placeholder="e.g. 5.00">
+                            <p>Transactions above this amount will require your manual approval.</p>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" style="width: 100%;">Save Policy</button>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const btn = document.getElementById('hamburger-btn');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+        function toggleMenu() { btn.classList.toggle('active'); sidebar.classList.toggle('open'); overlay.classList.toggle('show'); }
+        if(btn && sidebar && overlay) { btn.addEventListener('click', toggleMenu); overlay.addEventListener('click', toggleMenu); }
+
+        document.getElementById('policy-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert("Policy saved successfully! (Backend integration coming next)");
+        });
+    </script>
+</body>
+</html>
